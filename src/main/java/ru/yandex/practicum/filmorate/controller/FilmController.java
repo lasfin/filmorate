@@ -1,32 +1,50 @@
 package ru.yandex.practicum.filmorate.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.Film;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @RestController
 @RequestMapping("/api/films")
 @RequiredArgsConstructor
 public class FilmController {
+    private final static Logger log = LoggerFactory.getLogger(FilmController.class);
+    private Long nextId = 1L;
     private ArrayList<Film> films = new ArrayList<>();
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<Film> createFilm(@RequestBody Film film) {
-        films.add(film);
+    public ResponseEntity<Film> createFilm(@Validated @RequestBody Film filmBody) {
+        Film newFilm = new Film(
+                nextId++,
+                filmBody.getName(),
+                filmBody.getDescription(),
+                filmBody.getReleaseDate(),
+                filmBody.getDuration()
+        );
+        films.add(newFilm);
 
-        return ResponseEntity.created(null).body(film);
+        log.info("Film created: {}", newFilm);
+
+        return ResponseEntity
+                .created(URI.create("/api/films/" + newFilm.getId()))
+                .body(newFilm);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<Film> updateFilm(@RequestBody Film film) {
         Film filmToUpdate = films.stream()
-                .filter(f -> f.getId() == film.getId())
+                .filter(f -> Objects.equals(f.getId(), film.getId()))
                 .findFirst()
                 .orElseThrow(() -> new RuntimeException("Film not found"));
 
@@ -35,6 +53,8 @@ public class FilmController {
         filmToUpdate.setDescription(film.getDescription());
         filmToUpdate.setReleaseDate(film.getReleaseDate());
         filmToUpdate.setDuration(film.getDuration());
+
+        log.info("Film updated: {}", filmToUpdate);
 
         return ResponseEntity.ok(filmToUpdate);
     }
