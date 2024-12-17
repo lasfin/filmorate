@@ -1,7 +1,53 @@
 package ru.yandex.practicum.filmorate.controller;
 
-import org.springframework.web.bind.annotation.RestController;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import ru.yandex.practicum.filmorate.model.Film;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @RestController
+@RequestMapping("/api/films")
+@RequiredArgsConstructor
 public class FilmController {
+    private ArrayList<Film> films = new ArrayList<>();
+
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    public ResponseEntity<Film> createFilm(@RequestBody Film film) {
+        films.add(film);
+
+        return ResponseEntity.created(null).body(film);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Film> updateFilm(@RequestBody Film film) {
+        Film filmToUpdate = films.stream()
+                .filter(f -> f.getId() == film.getId())
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("Film not found"));
+
+
+        filmToUpdate.setName(film.getName());
+        filmToUpdate.setDescription(film.getDescription());
+        filmToUpdate.setReleaseDate(film.getReleaseDate());
+        filmToUpdate.setDuration(film.getDuration());
+
+        return ResponseEntity.ok(filmToUpdate);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Film> deleteFilm(@RequestBody Film film) {
+        films.remove(film);
+
+        return ResponseEntity.noContent().build();
+    }
+
+    public  ResponseEntity<List<Film>> getFilms() {
+        return ResponseEntity.ok(films);
+    }
+
 }
