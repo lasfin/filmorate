@@ -64,6 +64,7 @@ public class FilmController {
         return ResponseEntity.noContent().build();
     }
 
+    @GetMapping
     public  ResponseEntity<List<Film>> getFilms() {
         return ResponseEntity.ok(films);
     }
