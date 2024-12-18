@@ -1,11 +1,10 @@
 package ru.yandex.practicum.filmorate.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.Film;
 
@@ -23,8 +22,7 @@ public class FilmController {
     private ArrayList<Film> films = new ArrayList<>();
 
     @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<Film> createFilm(@Validated @RequestBody Film filmBody) {
+    public ResponseEntity<Film> createFilm(@Valid @RequestBody Film filmBody) {
         Film newFilm = new Film(
                 nextId++,
                 filmBody.getName(),
@@ -41,7 +39,7 @@ public class FilmController {
                 .body(newFilm);
     }
 
-    @PutMapping("/{id}")
+    @PutMapping()
     public ResponseEntity<Film> updateFilm(@RequestBody Film film) {
         Film filmToUpdate = films.stream()
                 .filter(f -> Objects.equals(f.getId(), film.getId()))

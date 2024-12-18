@@ -20,11 +20,11 @@ class FilmControllerTests {
         filmController = new FilmController();
         // Create a test film with valid data
         testFilm = new Film(
-                null,  // ID will be assigned by controller
+                null,
                 "Test Film",
                 "Test Description",
                 LocalDate.of(2023, 1, 1),
-                120  // duration in minutes
+                120
         );
     }
 
