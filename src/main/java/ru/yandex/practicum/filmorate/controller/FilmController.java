@@ -17,7 +17,7 @@ import java.util.Objects;
 @RequestMapping("/api/films")
 @RequiredArgsConstructor
 public class FilmController {
-    private final static Logger log = LoggerFactory.getLogger(FilmController.class);
+    private static final Logger log = LoggerFactory.getLogger(FilmController.class);
     private Long nextId = 1L;
     private ArrayList<Film> films = new ArrayList<>();
 
