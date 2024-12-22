@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Objects;
 
 @RestController
-@RequestMapping("/api/films")
+@RequestMapping("/films")
 @RequiredArgsConstructor
 public class FilmController {
     private static final Logger log = LoggerFactory.getLogger(FilmController.class);
@@ -35,7 +35,7 @@ public class FilmController {
         log.info("Film created: {}", newFilm);
 
         return ResponseEntity
-                .created(URI.create("/api/films/" + newFilm.getId()))
+                .created(URI.create("/films/" + newFilm.getId()))
                 .body(newFilm);
     }
 
