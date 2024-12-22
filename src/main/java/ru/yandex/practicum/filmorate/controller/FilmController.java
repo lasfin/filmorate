@@ -57,7 +57,7 @@ public class FilmController {
         return ResponseEntity.ok(filmToUpdate);
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping()
     public ResponseEntity<Film> deleteFilm(@RequestBody Film film) {
         films.remove(film);
 
