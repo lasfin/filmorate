@@ -85,7 +85,7 @@ class FilmTest {
 
         assertFalse(violations.isEmpty());
         assertEquals(1, violations.size());
-        assertEquals("Description should be at least 1 character long",
+        assertEquals("Description should be between 1 and 200 character long",
                 violations.iterator().next().getMessage());
     }
 
@@ -154,7 +154,7 @@ class FilmTest {
                 "Should have violations for name, description, release date, and duration");
 
         assertTrue(messages.contains("Name is required"));
-        assertTrue(messages.contains("Description should be at least 1 character long"));
+        assertTrue(messages.contains("Description should be between 1 and 200 character long"));
         assertTrue(messages.contains("Release date must be after December 28, 1895"));
         assertTrue(messages.contains("Duration should be greater than 0"));
     }
