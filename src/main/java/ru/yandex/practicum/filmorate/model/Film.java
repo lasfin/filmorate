@@ -19,7 +19,7 @@ public class Film {
     @Size(min = 1, message = "Name should be at least 1 character long")
     private String name;
     @NotNull(message = "Description is required")
-    @Size(min = 1, message = "Description should be at least 1 character long")
+    @Size(min = 1, max = 200, message = "Description should be between 1 and 200 character long")
     private String description;
     @NotNull(message = "Release date is required")
     @AfterFirstFilm
