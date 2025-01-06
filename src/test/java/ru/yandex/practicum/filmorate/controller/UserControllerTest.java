@@ -10,7 +10,9 @@ import ru.yandex.practicum.filmorate.storage.user.InMemoryUserStorage;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -28,7 +30,8 @@ class UserControllerTest {
                 "test@email.com",
                 "testLogin",
                 "Test Name",
-                LocalDate.of(1990, 1, 1)
+                LocalDate.of(1990, 1, 1),
+                Set.of()
         );
     }
 
@@ -66,7 +69,8 @@ class UserControllerTest {
                 "updated@email.com",
                 "updatedLogin",
                 "Updated Name",
-                LocalDate.of(1991, 1, 1)
+                LocalDate.of(1991, 1, 1),
+                Set.of()
         );
 
         ResponseEntity<User> updateResponse = userController.updateUser(updatedUser);
@@ -86,7 +90,8 @@ class UserControllerTest {
                 "test@email.com",
                 "testLogin",
                 "Test Name",
-                LocalDate.of(1990, 1, 1)
+                LocalDate.of(1990, 1, 1),
+                Set.of()
         );
 
         assertThrows(RuntimeException.class, () -> userController.updateUser(nonExistingUser));
@@ -122,7 +127,8 @@ class UserControllerTest {
                 "test2@email.com",
                 "testLogin2",
                 "Test Name 2",
-                LocalDate.of(1992, 1, 1)
+                LocalDate.of(1992, 1, 1),
+                Set.of()
         ));
 
         ResponseEntity<List<User>> response = userController.getUsers();
@@ -138,7 +144,8 @@ class UserControllerTest {
                 "test@email.com",
                 "testLogin",
                 null,
-                LocalDate.of(1990, 1, 1)
+                LocalDate.of(1990, 1, 1),
+                Set.of()
         );
 
         ResponseEntity<User> response = userController.createUser(userWithNullName);
