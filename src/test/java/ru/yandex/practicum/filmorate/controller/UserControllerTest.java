@@ -6,6 +6,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.storage.user.InMemoryUserStorage;
+import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -15,10 +17,12 @@ import static org.junit.jupiter.api.Assertions.*;
 class UserControllerTest {
     private UserController userController;
     private User testUser;
+    private UserStorage userStorage;
 
     @BeforeEach
     void setUp() {
-        userController = new UserController();
+        userStorage = new InMemoryUserStorage();
+        userController = new UserController(userStorage);
         testUser = new User(
                 1,
                 "test@email.com",
@@ -93,7 +97,7 @@ class UserControllerTest {
         ResponseEntity<User> createResponse = userController.createUser(testUser);
         User createdUser = createResponse.getBody();
 
-        ResponseEntity<User> deleteResponse = userController.deleteFilm(createdUser);
+        ResponseEntity<User> deleteResponse = userController.deleteUser(createdUser);
 
         assertEquals(HttpStatus.NO_CONTENT, deleteResponse.getStatusCode());
 
