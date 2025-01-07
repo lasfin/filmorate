@@ -18,7 +18,7 @@ public class InMemoryUserRepo implements UserRepo {
     private static final Logger log = LoggerFactory.getLogger(FilmController.class);
     private Long nextId = 0L;
     private HashMap<Long, User> users = new HashMap<>();
-    private HashMap<Long, Set<Long>> friends = new HashMap<>();
+    private HashMap<Long, Set<Long>> friendsIds = new HashMap<>();
 
     @Override
     public ResponseEntity<User> createUser(User user) {
@@ -68,16 +68,16 @@ public class InMemoryUserRepo implements UserRepo {
 
     @Override
     public ResponseEntity<User> addFriend(Long userId, Long friendId) {
-        friends.get(userId).add(friendId);
-        friends.get(friendId).add(userId);
+        friendsIds.get(userId).add(friendId);
+        friendsIds.get(friendId).add(userId);
 
         return ResponseEntity.ok(users.get(userId));
     }
 
     @Override
     public ResponseEntity<User> removeFriend(Long userId, Long friendId) {
-        friends.get(userId).remove(friendId);
-        friends.get(friendId).remove(userId);
+        friendsIds.get(userId).remove(friendId);
+        friendsIds.get(friendId).remove(userId);
 
         return ResponseEntity.ok(users.get(userId));
     }
