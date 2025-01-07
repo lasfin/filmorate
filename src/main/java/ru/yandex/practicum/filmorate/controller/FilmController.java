@@ -8,43 +8,43 @@ import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exceptions.BasicErrorResponse;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
+import ru.yandex.practicum.filmorate.service.FilmService;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/films")
 public class FilmController {
-    private final FilmStorage filmStorage;
+    private final FilmService filmService;
 
     @Autowired
-    public FilmController(FilmStorage filmStorage) {
-        this.filmStorage = filmStorage;
+    public FilmController(FilmService filmService) {
+        this.filmService = filmService;
     }
 
     @PostMapping
     public ResponseEntity<Film> createFilm(@Valid @RequestBody Film filmBody) {
-        return filmStorage.createFilm(filmBody);
+        return filmService.createFilm(filmBody);
     }
 
     @PutMapping()
     public ResponseEntity<Film> updateFilm(@RequestBody Film film) {
-        return filmStorage.updateFilm(film);
+        return filmService.updateFilm(film);
     }
 
     @DeleteMapping()
     public ResponseEntity<Film> deleteFilm(@RequestBody Film film) {
-        return filmStorage.deleteFilm(film);
+        return filmService.deleteFilm(film);
     }
 
     @GetMapping
     public ResponseEntity<List<Film>> getFilms() {
-        return filmStorage.getFilms();
+        return filmService.getFilms();
     }
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse handleException(Exception e) {
+    public ErrorResponse handleException(final Exception e) {
         return new BasicErrorResponse("Bad request", e.getMessage());
     }
 

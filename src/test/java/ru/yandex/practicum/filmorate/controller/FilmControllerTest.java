@@ -5,6 +5,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.ResponseEntity;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.service.FilmService;
 import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.film.InMemoryFilmStorage;
 
@@ -16,12 +17,12 @@ import static org.junit.jupiter.api.Assertions.*;
 class FilmControllerTest {
     private FilmController filmController;
     private Film testFilm;
-    private FilmStorage filmStorage;
+    private FilmService filmService;
 
     @BeforeEach
     void setUp() {
-        filmStorage = new InMemoryFilmStorage();
-        filmController = new FilmController(filmStorage);
+        filmService = new FilmService(new InMemoryFilmStorage());
+        filmController = new FilmController(filmService);
         // Create a test film with valid data
         testFilm = new Film(
                 null,
