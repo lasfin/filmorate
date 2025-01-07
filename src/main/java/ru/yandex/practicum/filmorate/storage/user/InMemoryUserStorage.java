@@ -9,27 +9,28 @@ import ru.yandex.practicum.filmorate.model.User;
 
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Objects;
 
 @Component
 public class InMemoryUserStorage implements UserStorage {
     private static final Logger log = LoggerFactory.getLogger(FilmController.class);
-    private Long nextId = 1L;
-    private ArrayList<User> users = new ArrayList<>();
+    private Long nextId = 0L;
+    private HashMap<Long, User> users = new HashMap<>();
 
     @Override
     public ResponseEntity<User> createUser(User user) {
+        long nextIdUpdated = nextId + 1;
+        nextId++;
+
         User newUser = new User(
-                nextId++,
+                nextIdUpdated,
                 user.getEmail(),
                 user.getLogin(),
                 user.getName(),
                 user.getBirthday()
         );
-        users.add(newUser);
-
-        log.info("Film created: {}", newUser);
+        users.put(nextIdUpdated, newUser);
 
         return ResponseEntity
                 .created(URI.create("/users/" + newUser.getId()))
@@ -38,31 +39,23 @@ public class InMemoryUserStorage implements UserStorage {
 
     @Override
     public ResponseEntity<User> updateUser(User user) {
-        User userToUpdate = users.stream()
-                .filter(f -> Objects.equals(f.getId(), user.getId()))
-                .findFirst()
-                .orElseThrow(() -> new RuntimeException("User not found"));
+        if (!users.containsKey(user.getId())) {
+            throw new RuntimeException("User not found");
+        }
 
+        users.put(user.getId(), user);
 
-        userToUpdate.setName(user.getName());
-        userToUpdate.setEmail(user.getEmail());
-        userToUpdate.setBirthday(user.getBirthday());
-        userToUpdate.setLogin(user.getLogin());
-
-        log.info("User updated: {}", userToUpdate);
-
-        return ResponseEntity.ok(userToUpdate);
+        return ResponseEntity.ok(user);
     }
 
     @Override
     public ResponseEntity<User> deleteUser(User user) {
-        users.remove(user);
-
+        users.remove(user.getId());
         return ResponseEntity.noContent().build();
     }
 
     @Override
     public ResponseEntity<List<User>> getUsers() {
-        return ResponseEntity.ok(users);
+        return ResponseEntity.ok(new ArrayList<>(users.values()));
     }
 }

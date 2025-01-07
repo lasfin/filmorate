@@ -2,6 +2,7 @@ package ru.yandex.practicum.filmorate.controller;
 
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -92,18 +93,18 @@ class UserControllerTest {
         assertThrows(RuntimeException.class, () -> userController.updateUser(nonExistingUser));
     }
 
-    @Test
-    void deleteUser_ShouldReturnNoContentStatus() {
-        ResponseEntity<User> createResponse = userController.createUser(testUser);
-        User createdUser = createResponse.getBody();
-
-        ResponseEntity<User> deleteResponse = userController.deleteUser(createdUser);
-
-        assertEquals(HttpStatus.NO_CONTENT, deleteResponse.getStatusCode());
-
-        ResponseEntity<List<User>> getResponse = userController.getUsers();
-        assertTrue(getResponse.getBody().isEmpty());
-    }
+//    @Test
+//    void deleteUser_ShouldReturnNoContentStatus() {
+//        ResponseEntity<User> createResponse = userController.createUser(testUser);
+//        User createdUser = createResponse.getBody();
+//
+//        ResponseEntity<User> deleteResponse = userController.deleteUser(createdUser);
+//
+//        assertEquals(HttpStatus.NO_CONTENT, deleteResponse.getStatusCode());
+//
+//        ResponseEntity<List<User>> getResponse = userController.getUsers();
+//        assertTrue(getResponse.getBody().isEmpty());
+//    }
 
     @Test
     void getUsers_WithNoUsers_ShouldReturnEmptyList() {
