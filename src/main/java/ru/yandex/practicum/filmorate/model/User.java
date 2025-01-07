@@ -27,7 +27,6 @@ public class User {
     private String name;
     @PastOrPresent(message = "Birthday should be in the past or present")
     private LocalDate birthday;
-    private Set<Long> friends;
 
     public String getName() {
         if (name == null) {
@@ -35,23 +34,5 @@ public class User {
         }
 
         return name;
-    }
-
-    public User addFriend(User friend) {
-        if (friends == null) {
-            friends = Set.of();
-        }
-
-        friends.add(friend.getId());
-        return this;
-    }
-
-    public User removeFriend(User friend) {
-        if (friends == null) {
-            return this;
-        }
-
-        friends.remove(friend.getId());
-        return this;
     }
 }

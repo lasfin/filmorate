@@ -5,38 +5,38 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.storage.user.UserStorage;
+import ru.yandex.practicum.filmorate.service.UserService;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/users")
 public class UserController {
-    private final UserStorage userStorage;
+    private final UserService userService;
 
     @Autowired
-    public UserController(UserStorage userStorage) {
-        this.userStorage = userStorage;
+    public UserController(UserService userService) {
+        this.userService = userService;
     }
 
     @PostMapping
     public ResponseEntity<User> createUser(@Valid @RequestBody User userBody) {
-        return userStorage.createUser(userBody);
+        return userService.createUser(userBody);
     }
 
     @PutMapping()
     public ResponseEntity<User> updateUser(@RequestBody User user) {
-        return userStorage.updateUser(user);
+        return userService.updateUser(user);
     }
 
     @DeleteMapping()
     public ResponseEntity<User> deleteUser(@RequestBody User user) {
-        return userStorage.deleteUser(user);
+        return userService.deleteUser(user);
     }
 
     @GetMapping
     public ResponseEntity<List<User>> getUsers() {
-        return userStorage.getUsers();
+        return userService.getUsers();
     }
 
 }

@@ -11,7 +11,6 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 
 @Component
 public class InMemoryUserStorage implements UserStorage {
@@ -26,8 +25,7 @@ public class InMemoryUserStorage implements UserStorage {
                 user.getEmail(),
                 user.getLogin(),
                 user.getName(),
-                user.getBirthday(),
-                Set.of()
+                user.getBirthday()
         );
         users.add(newUser);
 

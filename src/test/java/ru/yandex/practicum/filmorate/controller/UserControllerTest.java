@@ -6,32 +6,29 @@ import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.service.UserService;
 import ru.yandex.practicum.filmorate.storage.user.InMemoryUserStorage;
-import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class UserControllerTest {
     private UserController userController;
     private User testUser;
-    private UserStorage userStorage;
+    private UserService userService;
 
     @BeforeEach
     void setUp() {
-        userStorage = new InMemoryUserStorage();
-        userController = new UserController(userStorage);
+        userService = new UserService(new InMemoryUserStorage());
+        userController = new UserController(userService);
         testUser = new User(
                 1,
                 "test@email.com",
                 "testLogin",
                 "Test Name",
-                LocalDate.of(1990, 1, 1),
-                Set.of()
+                LocalDate.of(1990, 1, 1)
         );
     }
 
@@ -69,8 +66,7 @@ class UserControllerTest {
                 "updated@email.com",
                 "updatedLogin",
                 "Updated Name",
-                LocalDate.of(1991, 1, 1),
-                Set.of()
+                LocalDate.of(1991, 1, 1)
         );
 
         ResponseEntity<User> updateResponse = userController.updateUser(updatedUser);
@@ -90,8 +86,7 @@ class UserControllerTest {
                 "test@email.com",
                 "testLogin",
                 "Test Name",
-                LocalDate.of(1990, 1, 1),
-                Set.of()
+                LocalDate.of(1990, 1, 1)
         );
 
         assertThrows(RuntimeException.class, () -> userController.updateUser(nonExistingUser));
@@ -127,8 +122,7 @@ class UserControllerTest {
                 "test2@email.com",
                 "testLogin2",
                 "Test Name 2",
-                LocalDate.of(1992, 1, 1),
-                Set.of()
+                LocalDate.of(1992, 1, 1)
         ));
 
         ResponseEntity<List<User>> response = userController.getUsers();
@@ -144,8 +138,7 @@ class UserControllerTest {
                 "test@email.com",
                 "testLogin",
                 null,
-                LocalDate.of(1990, 1, 1),
-                Set.of()
+                LocalDate.of(1990, 1, 1)
         );
 
         ResponseEntity<User> response = userController.createUser(userWithNullName);
