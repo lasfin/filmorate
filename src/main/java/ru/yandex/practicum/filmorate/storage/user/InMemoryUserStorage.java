@@ -11,12 +11,14 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 
 @Component
 public class InMemoryUserStorage implements UserStorage {
     private static final Logger log = LoggerFactory.getLogger(FilmController.class);
     private Long nextId = 0L;
     private HashMap<Long, User> users = new HashMap<>();
+    private HashMap<Long, Set<Long>> friends = new HashMap<>();
 
     @Override
     public ResponseEntity<User> createUser(User user) {
@@ -57,5 +59,26 @@ public class InMemoryUserStorage implements UserStorage {
     @Override
     public ResponseEntity<List<User>> getUsers() {
         return ResponseEntity.ok(new ArrayList<>(users.values()));
+    }
+
+    @Override
+    public ResponseEntity<User> getUser(Long userId) {
+        return ResponseEntity.ok(users.get(userId));
+    }
+
+    @Override
+    public ResponseEntity<User> addFriend(Long userId, Long friendId) {
+        friends.get(userId).add(friendId);
+        friends.get(friendId).add(userId);
+
+        return ResponseEntity.ok(users.get(userId));
+    }
+
+    @Override
+    public ResponseEntity<User> removeFriend(Long userId, Long friendId) {
+        friends.get(userId).remove(friendId);
+        friends.get(friendId).remove(userId);
+
+        return ResponseEntity.ok(users.get(userId));
     }
 }

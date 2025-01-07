@@ -31,7 +31,39 @@ public class UserService {
         return userStorage.deleteUser(user);
     }
 
+    public ResponseEntity<User> getUser(Long userId) {
+        return userStorage.getUser(userId);
+    }
+
     public ResponseEntity<List<User>> getUsers() {
         return userStorage.getUsers();
+    }
+
+    public ResponseEntity<User> addFriend(Long userId, Long friendId) {
+        if (userId.equals(friendId)) {
+            throw new RuntimeException("User cannot be a friend of themselves");
+        }
+
+        final User user = userStorage.getUser(userId).getBody();
+        final User friend = userStorage.getUser(friendId).getBody();
+
+        if (user == null || friend == null) {
+            // not found exception?
+            throw new RuntimeException("User or friend not found");
+        }
+
+        return userStorage.addFriend(userId, friendId);
+    }
+
+    public ResponseEntity<User> removeFriend(Long userId, Long friendId) {
+        final User user = userStorage.getUser(userId).getBody();
+        final User friend = userStorage.getUser(friendId).getBody();
+
+        if (user == null || friend == null) {
+            // not found exception?
+            throw new RuntimeException("User or friend not found");
+        }
+
+        return userStorage.removeFriend(userId, friendId);
     }
 }
