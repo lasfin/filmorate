@@ -1,4 +1,4 @@
-package ru.yandex.practicum.filmorate.storage.user;
+package ru.yandex.practicum.filmorate.repository.user;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Set;
 
 @Component
-public class InMemoryUserStorage implements UserStorage {
+public class InMemoryUserRepo implements UserRepo {
     private static final Logger log = LoggerFactory.getLogger(FilmController.class);
     private Long nextId = 0L;
     private HashMap<Long, User> users = new HashMap<>();

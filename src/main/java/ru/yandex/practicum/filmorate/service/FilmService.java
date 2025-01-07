@@ -6,32 +6,32 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
+import ru.yandex.practicum.filmorate.repository.film.FilmRepo;
 
 import java.util.List;
 
 @Service
 public class FilmService {
-    private final FilmStorage filmStorage;
+    private final FilmRepo filmRepo;
 
     @Autowired
-    public FilmService(FilmStorage filmStorage) {
-        this.filmStorage = filmStorage;
+    public FilmService(FilmRepo filmRepo) {
+        this.filmRepo = filmRepo;
     }
 
     public ResponseEntity<Film> createFilm(@Valid @RequestBody Film filmBody) {
-        return filmStorage.createFilm(filmBody);
+        return filmRepo.createFilm(filmBody);
     }
 
     public ResponseEntity<Film> updateFilm(@RequestBody Film film) {
-        return filmStorage.updateFilm(film);
+        return filmRepo.updateFilm(film);
     }
 
     public ResponseEntity<Film> deleteFilm(@RequestBody Film film) {
-        return filmStorage.deleteFilm(film);
+        return filmRepo.deleteFilm(film);
     }
 
     public ResponseEntity<List<Film>> getFilms() {
-        return filmStorage.getFilms();
+        return filmRepo.getFilms();
     }
 }

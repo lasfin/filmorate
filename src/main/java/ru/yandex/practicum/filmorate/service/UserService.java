@@ -6,37 +6,37 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.storage.user.UserStorage;
+import ru.yandex.practicum.filmorate.repository.user.UserRepo;
 
 import java.util.List;
 
 @Service
 public class UserService {
-    private final UserStorage userStorage;
+    private final UserRepo userRepo;
 
     @Autowired
-    public UserService(UserStorage userStorage) {
-        this.userStorage = userStorage;
+    public UserService(UserRepo userRepo) {
+        this.userRepo = userRepo;
     }
 
     public ResponseEntity<User> createUser(@Valid @RequestBody User userBody) {
-        return userStorage.createUser(userBody);
+        return userRepo.createUser(userBody);
     }
 
     public ResponseEntity<User> updateUser(@RequestBody User user) {
-        return userStorage.updateUser(user);
+        return userRepo.updateUser(user);
     }
 
     public ResponseEntity<User> deleteUser(@RequestBody User user) {
-        return userStorage.deleteUser(user);
+        return userRepo.deleteUser(user);
     }
 
     public ResponseEntity<User> getUser(Long userId) {
-        return userStorage.getUser(userId);
+        return userRepo.getUser(userId);
     }
 
     public ResponseEntity<List<User>> getUsers() {
-        return userStorage.getUsers();
+        return userRepo.getUsers();
     }
 
     public ResponseEntity<User> addFriend(Long userId, Long friendId) {
@@ -44,26 +44,26 @@ public class UserService {
             throw new RuntimeException("User cannot be a friend of themselves");
         }
 
-        final User user = userStorage.getUser(userId).getBody();
-        final User friend = userStorage.getUser(friendId).getBody();
+        final User user = userRepo.getUser(userId).getBody();
+        final User friend = userRepo.getUser(friendId).getBody();
 
         if (user == null || friend == null) {
             // not found exception?
             throw new RuntimeException("User or friend not found");
         }
 
-        return userStorage.addFriend(userId, friendId);
+        return userRepo.addFriend(userId, friendId);
     }
 
     public ResponseEntity<User> removeFriend(Long userId, Long friendId) {
-        final User user = userStorage.getUser(userId).getBody();
-        final User friend = userStorage.getUser(friendId).getBody();
+        final User user = userRepo.getUser(userId).getBody();
+        final User friend = userRepo.getUser(friendId).getBody();
 
         if (user == null || friend == null) {
             // not found exception?
             throw new RuntimeException("User or friend not found");
         }
 
-        return userStorage.removeFriend(userId, friendId);
+        return userRepo.removeFriend(userId, friendId);
     }
 }

@@ -1,4 +1,4 @@
-package ru.yandex.practicum.filmorate.storage.film;
+package ru.yandex.practicum.filmorate.repository.film;
 
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.Objects;
 
 @Component
-public class InMemoryFilmStorage implements FilmStorage {
+public class InMemoryFilmRepo implements FilmRepo {
     private static final Logger log = LoggerFactory.getLogger(FilmController.class);
     private Long nextId = 1L;
     private ArrayList<Film> films = new ArrayList<>();
