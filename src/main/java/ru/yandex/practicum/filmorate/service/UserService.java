@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.*;
+import ru.yandex.practicum.filmorate.exceptions.user.UserNotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.repository.user.UserRepo;
 
@@ -48,8 +49,7 @@ public class UserService {
         final User friend = userRepo.getUser(friendId).getBody();
 
         if (user == null || friend == null) {
-            // not found exception?
-            throw new RuntimeException("User or friend not found");
+            throw new UserNotFoundException("User or friend not found");
         }
 
         return userRepo.addFriend(userId, friendId);
@@ -60,10 +60,20 @@ public class UserService {
         final User friend = userRepo.getUser(friendId).getBody();
 
         if (user == null || friend == null) {
-            // not found exception?
-            throw new RuntimeException("User or friend not found");
+            throw new UserNotFoundException("User or friend not found");
         }
 
         return userRepo.removeFriend(userId, friendId);
+    }
+
+    public ResponseEntity<List<User>> getCommonFriends(Long userId, Long friendId) {
+        final User user = userRepo.getUser(userId).getBody();
+        final User friend = userRepo.getUser(friendId).getBody();
+
+        if (user == null || friend == null) {
+            throw new UserNotFoundException("User or friend not found");
+        }
+
+        return userRepo.getCommonFriends(userId, friendId);
     }
 }

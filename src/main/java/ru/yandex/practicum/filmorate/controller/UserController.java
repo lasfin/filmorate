@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exceptions.BasicErrorResponse;
+import ru.yandex.practicum.filmorate.exceptions.user.UserNotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.UserService;
 
@@ -42,17 +43,37 @@ public class UserController {
         return userService.getUsers();
     }
 
-    @ExceptionHandler
+    @PutMapping("/{userId}/friends/{friendId}")
+    public ResponseEntity<User> addFriend(@PathVariable Long userId, @PathVariable Long friendId) {
+        return userService.addFriend(userId, friendId);
+    }
+
+    @DeleteMapping("/{userId}/friends/{friendId}")
+    public ResponseEntity<User> removeFriend(@PathVariable Long userId, @PathVariable Long friendId) {
+        return userService.removeFriend(userId, friendId);
+    }
+
+    @GetMapping("/{userId}")
+    public ResponseEntity<User> getUser(@PathVariable Long userId) {
+        return userService.getUser(userId);
+    }
+
+    @GetMapping("/{userId}/friends/common/{friendId}")
+    public ResponseEntity<List<User>> getCommonFriends(@PathVariable Long userId, @PathVariable Long friendId) {
+        return userService.getCommonFriends(userId, friendId);
+    }
+
+    @ExceptionHandler(RuntimeException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleException(final Exception e) {
         return new BasicErrorResponse("Bad request", e.getMessage());
     }
 
-    @ExceptionHandler
+    @ExceptionHandler(UserNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponse handleUserNotFoundException(final Exception e) {
         return new BasicErrorResponse(
-                "User not found",
+                "Error",
                 e.getMessage()
         );
     }
