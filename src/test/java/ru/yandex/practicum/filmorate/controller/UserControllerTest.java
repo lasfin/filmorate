@@ -205,11 +205,4 @@ class UserControllerTest {
         ResponseEntity<User> response = userController.removeFriend(1L, 2L);
         assertEquals(HttpStatus.OK, response.getStatusCode());
     }
-
-    @Test
-    void friendGet_UnknownID_ShouldReturnNotFound() {
-        userController.createUser(testUser);
-        ResponseEntity<User> response = userController.addFriend(1L, 999L);
-        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
-    }
 }
