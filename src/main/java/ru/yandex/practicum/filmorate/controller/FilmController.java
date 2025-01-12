@@ -6,7 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.filmorate.exceptions.BasicErrorResponse;
+import ru.yandex.practicum.filmorate.exceptions.BadRequestResponse;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
 
@@ -45,7 +45,7 @@ public class FilmController {
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleException(final Exception e) {
-        return new BasicErrorResponse("Bad request", e.getMessage());
+        return new BadRequestResponse("Bad request", e.getMessage());
     }
 
 }

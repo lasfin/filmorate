@@ -27,7 +27,7 @@ public class UserService {
         return userRepo.createUser(userBody);
     }
 
-    public ResponseEntity<User> updateUser(@RequestBody User user) {
+    public ResponseEntity<User> updateUser(@RequestBody User user) throws UserNotFoundException {
         return userRepo.updateUser(user);
     }
 
@@ -43,25 +43,29 @@ public class UserService {
         return userRepo.getUsers();
     }
 
-    public ResponseEntity<User> addFriend(Long userId, Long friendId) {
-        log.info("Adding friend {} to user {}", friendId, userId);
+    public ResponseEntity<User> addFriend(Long userId, Long friendId) throws UserNotFoundException {
+        log.info("user service. Adding friend {} to user {}", friendId, userId);
 
         if (userId.equals(friendId)) {
-            throw new RuntimeException("User cannot be a friend of themselves");
+            log.warn("User and friend are the same user {} friend {}", friendId, userId);
+
+            throw new UserNotFoundException("User and friend are the same");
         }
 
-        final User user = userRepo.getUser(userId).getBody();
-        final User friend = userRepo.getUser(friendId).getBody();
-
-        if (user == null || friend == null) {
+        try {
+            final User user = userRepo.getUser(userId).getBody();
+            final User friend = userRepo.getUser(friendId).getBody();
+        } catch (Exception e) {
             log.warn("UserNotFoundException use {} friend {}", friendId, userId);
             throw new UserNotFoundException("User or friend not found");
+        } finally {
+            userRepo.addFriend(userId, friendId);
         }
 
-        return userRepo.addFriend(userId, friendId);
+        return userRepo.getUser(userId);
     }
 
-    public ResponseEntity<User> removeFriend(Long userId, Long friendId) {
+    public ResponseEntity<User> removeFriend(Long userId, Long friendId) throws UserNotFoundException {
         final User user = userRepo.getUser(userId).getBody();
         final User friend = userRepo.getUser(friendId).getBody();
 
@@ -73,7 +77,7 @@ public class UserService {
         return userRepo.removeFriend(userId, friendId);
     }
 
-    public ResponseEntity<List<User>> getFriends(Long userId) {
+    public ResponseEntity<List<User>> getFriends(Long userId) throws UserNotFoundException {
         final User user = userRepo.getUser(userId).getBody();
 
         if (user == null) {
@@ -83,7 +87,7 @@ public class UserService {
         return userRepo.getFriends(userId);
     }
 
-    public ResponseEntity<List<User>> getCommonFriends(Long userId, Long friendId) {
+    public ResponseEntity<List<User>> getCommonFriends(Long userId, Long friendId) throws UserNotFoundException {
         final User user = userRepo.getUser(userId).getBody();
         final User friend = userRepo.getUser(friendId).getBody();
 

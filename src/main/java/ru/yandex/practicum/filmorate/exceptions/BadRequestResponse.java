@@ -5,11 +5,11 @@ import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ProblemDetail;
 import org.springframework.web.ErrorResponse;
 
-public class BasicErrorResponse implements ErrorResponse {
+public class BadRequestResponse implements ErrorResponse {
     private final HttpStatusCode statusCode;
     private final ProblemDetail body;
 
-    public BasicErrorResponse(String title, String message) {
+    public BadRequestResponse(String title, String message) {
         this.statusCode = HttpStatusCode.valueOf(400); // BAD_REQUEST
         this.body = ProblemDetail.forStatusAndDetail(statusCode, message);
         this.body.setTitle(title);
