@@ -5,6 +5,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.ResponseEntity;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.repository.user.InMemoryUserRepo;
 import ru.yandex.practicum.filmorate.service.FilmService;
 import ru.yandex.practicum.filmorate.repository.film.InMemoryFilmRepo;
 
@@ -20,7 +21,9 @@ class FilmControllerTest {
 
     @BeforeEach
     void setUp() {
-        filmService = new FilmService(new InMemoryFilmRepo());
+        filmService = new FilmService(
+            new InMemoryFilmRepo(), new InMemoryUserRepo()
+        );
         filmController = new FilmController(filmService);
         // Create a test film with valid data
         testFilm = new Film(

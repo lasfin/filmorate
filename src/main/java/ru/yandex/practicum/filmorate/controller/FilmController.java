@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exceptions.BadRequestResponse;
 import ru.yandex.practicum.filmorate.exceptions.NotFoundResponse;
 import ru.yandex.practicum.filmorate.exceptions.film.FilmNotFoundException;
+import ru.yandex.practicum.filmorate.exceptions.user.UserNotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
 
@@ -44,9 +45,35 @@ public class FilmController {
         return filmService.getFilms();
     }
 
+    @PutMapping("/{id}/like/{userId}")
+    public ResponseEntity<Film> addLike(
+            @PathVariable Long id,
+            @PathVariable Long userId) {
+        return filmService.addLike(id, userId);
+    }
+
+    @DeleteMapping("/{id}/like/{userId}")
+    public ResponseEntity<Film> removeLike(
+            @PathVariable Long id,
+            @PathVariable Long userId) {
+        return filmService.removeLike(id, userId);
+    }
+
+    @GetMapping("/popular")
+    public ResponseEntity<List<Film>> getPopularFilms(
+            @RequestParam(defaultValue = "10") Integer count) {
+        return filmService.getPopularFilms(count);
+    }
+
     @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponse handleException(final FilmNotFoundException e) {
+        return new NotFoundResponse("Not found", e.getMessage());
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ErrorResponse handleException(final UserNotFoundException e) {
         return new NotFoundResponse("Not found", e.getMessage());
     }
 
