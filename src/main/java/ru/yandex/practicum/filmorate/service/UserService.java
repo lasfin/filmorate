@@ -1,6 +1,8 @@
 package ru.yandex.practicum.filmorate.service;
 
 import jakarta.validation.Valid;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -14,6 +16,7 @@ import java.util.List;
 @Service
 public class UserService {
     private final UserRepo userRepo;
+    private static final Logger log = LoggerFactory.getLogger(UserService.class);
 
     @Autowired
     public UserService(UserRepo userRepo) {
@@ -41,6 +44,8 @@ public class UserService {
     }
 
     public ResponseEntity<User> addFriend(Long userId, Long friendId) {
+        log.info("Adding friend {} to user {}", friendId, userId);
+
         if (userId.equals(friendId)) {
             throw new RuntimeException("User cannot be a friend of themselves");
         }
@@ -49,6 +54,7 @@ public class UserService {
         final User friend = userRepo.getUser(friendId).getBody();
 
         if (user == null || friend == null) {
+            log.warn("UserNotFoundException use {} friend {}", friendId, userId);
             throw new UserNotFoundException("User or friend not found");
         }
 
@@ -60,6 +66,7 @@ public class UserService {
         final User friend = userRepo.getUser(friendId).getBody();
 
         if (user == null || friend == null) {
+            log.warn("UserNotFoundException use {} friend {}", friendId, userId);
             throw new UserNotFoundException("User or friend not found");
         }
 

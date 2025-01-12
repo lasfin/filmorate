@@ -4,26 +4,26 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
-import ru.yandex.practicum.filmorate.controller.FilmController;
+import ru.yandex.practicum.filmorate.exceptions.user.UserNotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
 
 import java.net.URI;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Component
 public class InMemoryUserRepo implements UserRepo {
-    private static final Logger log = LoggerFactory.getLogger(FilmController.class);
+    private static final Logger log = LoggerFactory.getLogger(InMemoryUserRepo.class);
     private Long nextId = 0L;
     private HashMap<Long, User> users = new HashMap<>();
     private HashMap<Long, Set<Long>> friendsIds = new HashMap<>();
 
     @Override
     public ResponseEntity<User> createUser(User user) {
-        long nextIdUpdated = nextId + 1;
-        nextId++;
+        long nextIdUpdated = ++nextId;
+        // Add initialization of friendsIds
+        if (!friendsIds.containsKey(nextIdUpdated)) {
+            friendsIds.put(nextIdUpdated, new HashSet<>());
+        }
 
         User newUser = new User(
                 nextIdUpdated,
@@ -42,7 +42,7 @@ public class InMemoryUserRepo implements UserRepo {
     @Override
     public ResponseEntity<User> updateUser(User user) {
         if (!users.containsKey(user.getId())) {
-            throw new RuntimeException("User not found");
+            throw new UserNotFoundException("User not found");
         }
 
         users.put(user.getId(), user);
@@ -88,13 +88,14 @@ public class InMemoryUserRepo implements UserRepo {
         final User friend = users.get(friendId);
 
         if (user == null || friend == null) {
-            throw new RuntimeException("User or friend not found");
+            throw new UserNotFoundException("User not found");
         }
 
         Set<Long> userFriends = friendsIds.get(userId);
         Set<Long> friendFriends = friendsIds.get(friendId);
 
-        userFriends.retainAll(friendFriends);
+        Set<Long> commonIds = new HashSet<>(userFriends);
+        commonIds.retainAll(friendFriends);
 
         List<User> commonFriends = new ArrayList<>();
         for (Long commonFriendId : userFriends) {
