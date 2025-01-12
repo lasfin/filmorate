@@ -43,7 +43,7 @@ public class InMemoryUserRepo implements UserRepo {
     public ResponseEntity<User> updateUser(User user) {
         if (!users.containsKey(user.getId())) {
             log.warn("UserNotFoundException user {}", user.getId());
-            
+
             throw new UserNotFoundException("User not found");
         }
 
@@ -132,7 +132,7 @@ public class InMemoryUserRepo implements UserRepo {
         commonIds.retainAll(friendFriends);
 
         List<User> commonFriends = new ArrayList<>();
-        for (Long commonFriendId : userFriends) {
+        for (Long commonFriendId : commonIds) {
             commonFriends.add(users.get(commonFriendId));
         }
 
