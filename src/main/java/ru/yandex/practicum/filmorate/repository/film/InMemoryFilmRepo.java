@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RequestBody;
 import ru.yandex.practicum.filmorate.controller.FilmController;
+import ru.yandex.practicum.filmorate.exceptions.film.FilmNotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 
 import java.net.URI;
@@ -37,12 +38,11 @@ public class InMemoryFilmRepo implements FilmRepo {
                 .body(newFilm);
     }
 
-
     public ResponseEntity<Film> updateFilm(@RequestBody Film film) {
         Film filmToUpdate = films.stream()
                 .filter(f -> Objects.equals(f.getId(), film.getId()))
                 .findFirst()
-                .orElseThrow(() -> new RuntimeException("Film not found"));
+                .orElseThrow(() -> new FilmNotFoundException("Film not found"));
 
         filmToUpdate.setName(film.getName());
         filmToUpdate.setDescription(film.getDescription());
