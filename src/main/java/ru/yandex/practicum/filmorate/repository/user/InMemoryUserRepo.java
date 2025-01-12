@@ -83,6 +83,23 @@ public class InMemoryUserRepo implements UserRepo {
     }
 
     @Override
+    public ResponseEntity<List<User>> getFriends(Long userId) {
+        final User user = users.get(userId);
+
+        if (user == null) {
+            throw new UserNotFoundException("User not found");
+        }
+
+        Set<Long> friendIds = friendsIds.get(userId);
+        List<User> friends = new ArrayList<>();
+        for (Long friendId : friendIds) {
+            friends.add(users.get(friendId));
+        }
+
+        return ResponseEntity.ok(friends);
+    }
+
+    @Override
     public ResponseEntity<List<User>> getCommonFriends(Long userId, Long friendId) {
         final User user = users.get(userId);
         final User friend = users.get(friendId);

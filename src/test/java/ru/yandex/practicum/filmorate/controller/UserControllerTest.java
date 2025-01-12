@@ -172,11 +172,6 @@ class UserControllerTest {
     }
 
     @Test
-    void removeFriend_ShouldReturnOkStatus() {
-        userController.createUser(testUser);
-    }
-
-    @Test
     void getFriends_ShouldReturnCommonFriends() {
         userController.createUser(testUser);
         userController.createUser(secondTestUser);
@@ -198,5 +193,18 @@ class UserControllerTest {
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(1, response.getBody().size());
         assertEquals(3L, response.getBody().get(0).getId());
+    }
+
+    @Test
+    void removeFriend_ShouldReturnOkStatus() {
+        userController.createUser(testUser);
+        userController.createUser(secondTestUser);
+
+        userController.addFriend(1L, 2L);
+
+        ResponseEntity<User> response = userController.removeFriend(1L, 2L);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+
+
     }
 }

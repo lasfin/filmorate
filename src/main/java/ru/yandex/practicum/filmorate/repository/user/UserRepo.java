@@ -14,5 +14,6 @@ public interface UserRepo {
 
     ResponseEntity<User> addFriend(Long userId, Long friendId);
     ResponseEntity<User> removeFriend(Long userId, Long friendId);
+    ResponseEntity<List<User>> getFriends(Long userId);
     ResponseEntity<List<User>> getCommonFriends(Long userId, Long friendId);
 }

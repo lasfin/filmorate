@@ -58,15 +58,14 @@ public class UserController {
         return userService.getUser(userId);
     }
 
+    @GetMapping("/{userId}/friends")
+    public ResponseEntity<List<User>> getFriends(@PathVariable Long userId) {
+        return userService.getFriends(userId);
+    }
+
     @GetMapping("/{userId}/friends/common/{friendId}")
     public ResponseEntity<List<User>> getCommonFriends(@PathVariable Long userId, @PathVariable Long friendId) {
         return userService.getCommonFriends(userId, friendId);
-    }
-
-    @ExceptionHandler(RuntimeException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse handleException(final Exception e) {
-        return new BasicErrorResponse("Bad request", e.getMessage());
     }
 
     @ExceptionHandler(UserNotFoundException.class)
@@ -77,4 +76,10 @@ public class UserController {
                 e.getMessage()
         );
     }
+
+//    @ExceptionHandler(RuntimeException.class)
+//    @ResponseStatus(HttpStatus.BAD_REQUEST)
+//    public ErrorResponse handleException(final Exception e) {
+//        return new BasicErrorResponse("Bad request", e.getMessage());
+//    }
 }

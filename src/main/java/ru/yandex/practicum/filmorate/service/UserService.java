@@ -73,6 +73,16 @@ public class UserService {
         return userRepo.removeFriend(userId, friendId);
     }
 
+    public ResponseEntity<List<User>> getFriends(Long userId) {
+        final User user = userRepo.getUser(userId).getBody();
+
+        if (user == null) {
+            throw new UserNotFoundException("User not found");
+        }
+
+        return userRepo.getFriends(userId);
+    }
+
     public ResponseEntity<List<User>> getCommonFriends(Long userId, Long friendId) {
         final User user = userRepo.getUser(userId).getBody();
         final User friend = userRepo.getUser(friendId).getBody();
