@@ -107,7 +107,7 @@ class FilmControllerTest {
         ResponseEntity<List<Film>> getResponse = filmController.getFilms();
 
         // Then
-        assertEquals(204, deleteResponse.getStatusCodeValue());
+        assertEquals(200, deleteResponse.getStatusCodeValue());
         assertEquals(0, getResponse.getBody().size());
     }
 

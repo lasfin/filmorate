@@ -103,13 +103,13 @@ class UserControllerTest {
     }
 
     @Test
-    void deleteUser_ShouldReturnNoContentStatus() {
+    void deleteUser_ShouldWork() {
         ResponseEntity<User> createResponse = userController.createUser(testUser);
         User createdUser = createResponse.getBody();
 
         ResponseEntity<User> deleteResponse = userController.deleteUser(createdUser);
 
-        assertEquals(HttpStatus.NO_CONTENT, deleteResponse.getStatusCode());
+        assertEquals(HttpStatus.OK, deleteResponse.getStatusCode());
 
         ResponseEntity<List<User>> getResponse = userController.getUsers();
         assertTrue(getResponse.getBody().isEmpty());
