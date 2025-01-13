@@ -15,6 +15,7 @@ import ru.yandex.practicum.filmorate.exceptions.user.UserNotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.UserService;
 
+import java.net.URI;
 import java.util.List;
 
 @Controller
@@ -30,7 +31,10 @@ public class UserController {
 
     @PostMapping
     public ResponseEntity<User> createUser(@Valid @RequestBody User userBody) {
-        return ResponseEntity.ok(userService.createUser(userBody));
+        User createdUser = userService.createUser(userBody);
+        URI location = URI.create("/users/" + createdUser.getId());
+
+        return ResponseEntity.created(location).body(createdUser);
     }
 
     @PutMapping()
