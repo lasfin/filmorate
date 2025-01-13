@@ -2,12 +2,10 @@ package ru.yandex.practicum.filmorate.repository.user;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exceptions.user.UserNotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
 
-import java.net.URI;
 import java.util.*;
 
 @Component
@@ -18,9 +16,8 @@ public class InMemoryUserRepo implements UserRepo {
     private HashMap<Long, Set<Long>> friendsIds = new HashMap<>();
 
     @Override
-    public ResponseEntity<User> createUser(User user) {
+    public User createUser(User user) {
         long nextIdUpdated = ++nextId;
-        // Add initialization of friendsIds
         if (!friendsIds.containsKey(nextIdUpdated)) {
             friendsIds.put(nextIdUpdated, new HashSet<>());
         }
@@ -34,13 +31,11 @@ public class InMemoryUserRepo implements UserRepo {
         );
         users.put(nextIdUpdated, newUser);
 
-        return ResponseEntity
-                .created(URI.create("/users/" + newUser.getId()))
-                .body(newUser);
+        return newUser;
     }
 
     @Override
-    public ResponseEntity<User> updateUser(User user) {
+    public User updateUser(User user) {
         if (!users.containsKey(user.getId())) {
             log.warn("UserNotFoundException user {}", user.getId());
 
@@ -49,31 +44,36 @@ public class InMemoryUserRepo implements UserRepo {
 
         users.put(user.getId(), user);
 
-        return ResponseEntity.ok(user);
+        return user;
     }
 
     @Override
-    public ResponseEntity<User> deleteUser(User user) throws UserNotFoundException {
+    public User deleteUser(User user) {
         if (!users.containsKey(user.getId())) {
             throw new UserNotFoundException("User not found");
         }
+        User userToReturn = users.get(user.getId());
         users.remove(user.getId());
-        return ResponseEntity.noContent().build();
+
+        return userToReturn;
     }
 
     @Override
-    public ResponseEntity<List<User>> getUsers() {
-        return ResponseEntity.ok(new ArrayList<>(users.values()));
+    public List<User> getUsers() {
+        return new ArrayList<>(users.values());
     }
 
     @Override
-    public ResponseEntity<User> getUser(Long userId) throws UserNotFoundException {
-        return ResponseEntity.ok(Optional.ofNullable(users.get(userId))
-                .orElseThrow(() -> new UserNotFoundException("User not found")));
+    public User getUser(Long userId) {
+        return Optional.ofNullable(users.get(userId))
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
     }
 
+    // todo:
+    // Отсутствие данных при выборке - это ошибка в логике - с точки зрения хранилища ничего страшного нет,
+    // просто нет данных. Но именно сервис должен воспринять это как ошибку и кинуть эксепшен. Как-то так )
     @Override
-    public ResponseEntity<User> addFriend(Long userId, Long friendId) throws UserNotFoundException {
+    public User addFriend(Long userId, Long friendId) throws UserNotFoundException {
         log.info("in memory Adding friend {} to user {}", friendId, userId);
 
         if (!users.containsKey(userId) || !users.containsKey(friendId)) {
@@ -86,11 +86,11 @@ public class InMemoryUserRepo implements UserRepo {
         friendsIds.get(userId).add(friendId);
         friendsIds.get(friendId).add(userId);
 
-        return ResponseEntity.ok(users.get(userId));
+        return users.get(userId);
     }
 
     @Override
-    public ResponseEntity<User> removeFriend(Long userId, Long friendId) throws UserNotFoundException {
+    public User removeFriend(Long userId, Long friendId) throws UserNotFoundException {
         if (!users.containsKey(userId) || !users.containsKey(friendId)) {
             throw new UserNotFoundException("User or friend not found");
         }
@@ -98,11 +98,11 @@ public class InMemoryUserRepo implements UserRepo {
         friendsIds.get(userId).remove(friendId);
         friendsIds.get(friendId).remove(userId);
 
-        return ResponseEntity.ok(users.get(userId));
+        return users.get(userId);
     }
 
     @Override
-    public ResponseEntity<List<User>> getFriends(Long userId) throws UserNotFoundException {
+    public List<User> getFriends(Long userId) throws UserNotFoundException {
         if (!users.containsKey(userId)) {
             throw new UserNotFoundException("User or friend not found");
         }
@@ -113,11 +113,11 @@ public class InMemoryUserRepo implements UserRepo {
             friends.add(users.get(friendId));
         }
 
-        return ResponseEntity.ok(friends);
+        return friends;
     }
 
     @Override
-    public ResponseEntity<List<User>> getCommonFriends(Long userId, Long friendId) throws UserNotFoundException {
+    public List<User> getCommonFriends(Long userId, Long friendId) throws UserNotFoundException {
         final User user = users.get(userId);
         final User friend = users.get(friendId);
 
@@ -136,6 +136,6 @@ public class InMemoryUserRepo implements UserRepo {
             commonFriends.add(users.get(commonFriendId));
         }
 
-        return ResponseEntity.ok(commonFriends);
+        return commonFriends;
     }
 }

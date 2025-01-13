@@ -4,7 +4,6 @@ import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exceptions.user.UserNotFoundException;
@@ -23,27 +22,27 @@ public class UserService {
         this.userRepo = userRepo;
     }
 
-    public ResponseEntity<User> createUser(@Valid @RequestBody User userBody) {
+    public User createUser(@Valid @RequestBody User userBody) {
         return userRepo.createUser(userBody);
     }
 
-    public ResponseEntity<User> updateUser(@RequestBody User user) throws UserNotFoundException {
+    public User updateUser(@RequestBody User user) {
         return userRepo.updateUser(user);
     }
 
-    public ResponseEntity<User> deleteUser(@RequestBody User user) {
+    public User deleteUser(@RequestBody User user) {
         return userRepo.deleteUser(user);
     }
 
-    public ResponseEntity<User> getUser(Long userId) {
+    public User getUser(Long userId) {
         return userRepo.getUser(userId);
     }
 
-    public ResponseEntity<List<User>> getUsers() {
+    public List<User> getUsers() {
         return userRepo.getUsers();
     }
 
-    public ResponseEntity<User> addFriend(Long userId, Long friendId) throws UserNotFoundException {
+    public User addFriend(Long userId, Long friendId) {
         log.info("user service. Adding friend {} to user {}", friendId, userId);
 
         if (userId.equals(friendId)) {
@@ -53,8 +52,8 @@ public class UserService {
         }
 
         try {
-            final User user = userRepo.getUser(userId).getBody();
-            final User friend = userRepo.getUser(friendId).getBody();
+            final User user = userRepo.getUser(userId);
+            final User friend = userRepo.getUser(friendId);
         } catch (Exception e) {
             log.warn("UserNotFoundException use {} friend {}", friendId, userId);
             throw new UserNotFoundException("User or friend not found");
@@ -65,9 +64,9 @@ public class UserService {
         return userRepo.getUser(userId);
     }
 
-    public ResponseEntity<User> removeFriend(Long userId, Long friendId) throws UserNotFoundException {
-        final User user = userRepo.getUser(userId).getBody();
-        final User friend = userRepo.getUser(friendId).getBody();
+    public User removeFriend(Long userId, Long friendId) {
+        final User user = userRepo.getUser(userId);
+        final User friend = userRepo.getUser(friendId);
 
         if (user == null || friend == null) {
             log.warn("UserNotFoundException use {} friend {}", friendId, userId);
@@ -77,8 +76,8 @@ public class UserService {
         return userRepo.removeFriend(userId, friendId);
     }
 
-    public ResponseEntity<List<User>> getFriends(Long userId) throws UserNotFoundException {
-        final User user = userRepo.getUser(userId).getBody();
+    public List<User> getFriends(Long userId) {
+        final User user = userRepo.getUser(userId);
 
         if (user == null) {
             throw new UserNotFoundException("User not found");
@@ -87,9 +86,9 @@ public class UserService {
         return userRepo.getFriends(userId);
     }
 
-    public ResponseEntity<List<User>> getCommonFriends(Long userId, Long friendId) throws UserNotFoundException {
-        final User user = userRepo.getUser(userId).getBody();
-        final User friend = userRepo.getUser(friendId).getBody();
+    public List<User> getCommonFriends(Long userId, Long friendId) {
+        final User user = userRepo.getUser(userId);
+        final User friend = userRepo.getUser(friendId);
 
         if (user == null || friend == null) {
             throw new UserNotFoundException("User or friend not found");

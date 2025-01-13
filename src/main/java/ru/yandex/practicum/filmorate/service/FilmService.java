@@ -41,8 +41,8 @@ public class FilmService {
     }
 
     public ResponseEntity<Film> addLike(Long filmId, Long userId) {
-        ResponseEntity<User> userResponse = userRepo.getUser(userId);
-        if (userResponse.getStatusCode().is4xxClientError()) {
+        User user = userRepo.getUser(userId);
+        if (user == null) {
             throw new UserNotFoundException("User not found");
         }
         return filmRepo.addLike(filmId, userId);
