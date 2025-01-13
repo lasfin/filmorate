@@ -29,10 +29,17 @@ public class FilmService {
     }
 
     public Film updateFilm(@RequestBody Film film) {
+        if (filmRepo.getFilm(film.getId()) == null) {
+            throw new FilmNotFoundException("Film not found: " + film.getId());
+        }
         return filmRepo.updateFilm(film);
     }
 
     public Film deleteFilm(@RequestBody Film film) {
+        if (filmRepo.getFilm(film.getId()) == null) {
+            throw new FilmNotFoundException("Film not found: " + film.getId());
+        }
+
         return filmRepo.deleteFilm(film);
     }
 
@@ -56,8 +63,13 @@ public class FilmService {
 
     public Film removeLike(Long filmId, Long userId) {
         User user = userRepo.getUser(userId);
+        Film film = filmRepo.getFilm(filmId);
+
         if (user == null) {
             throw new UserNotFoundException("User not found: " + userId);
+        }
+        if (film == null) {
+            throw new FilmNotFoundException("Film not found: " + filmId);
         }
 
         return filmRepo.removeLike(filmId, userId);

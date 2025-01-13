@@ -6,7 +6,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RequestBody;
 import ru.yandex.practicum.filmorate.controller.FilmController;
-import ru.yandex.practicum.filmorate.exceptions.film.FilmNotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 
 import java.util.*;
@@ -44,11 +43,15 @@ public class InMemoryFilmRepo implements FilmRepo {
     }
 
     public Film updateFilm(@RequestBody Film film) {
-        Film filmToUpdate = films.stream()
+        Optional<Film> optionalFilm = films.stream()
                 .filter(f -> Objects.equals(f.getId(), film.getId()))
-                .findFirst()
-                .orElseThrow(() -> new FilmNotFoundException("Film not found"));
+                .findFirst();
 
+        if (optionalFilm.isEmpty()) {
+            return null;
+        }
+
+        Film filmToUpdate = optionalFilm.get();
         filmToUpdate.setName(film.getName());
         filmToUpdate.setDescription(film.getDescription());
         filmToUpdate.setReleaseDate(film.getReleaseDate());
@@ -95,18 +98,20 @@ public class InMemoryFilmRepo implements FilmRepo {
 
     @Override
     public Film removeLike(Long filmId, Long userId) {
-        Film film = films.stream()
+        Optional<Film> optionalFilm = films.stream()
                 .filter(f -> Objects.equals(f.getId(), filmId))
-                .findFirst()
-                .orElseThrow(() -> new FilmNotFoundException("Film not found"));
+                .findFirst();
 
         if (!filmLikes.get(filmId).remove(userId)) {
+            return null;
+        }
+        if (optionalFilm.isEmpty()) {
             return null;
         }
 
         log.info("User {} removed like from film {}", userId, filmId);
 
-        return film;
+        return optionalFilm.get();
     }
 
     @Override
