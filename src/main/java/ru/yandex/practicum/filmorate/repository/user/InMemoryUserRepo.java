@@ -37,9 +37,7 @@ public class InMemoryUserRepo implements UserRepo {
     @Override
     public User updateUser(User user) {
         if (!users.containsKey(user.getId())) {
-            log.warn("UserNotFoundException user {}", user.getId());
-
-            throw new UserNotFoundException("User not found" + user.getId());
+            return null;
         }
 
         users.put(user.getId(), user);
@@ -50,8 +48,9 @@ public class InMemoryUserRepo implements UserRepo {
     @Override
     public User deleteUser(User user) {
         if (!users.containsKey(user.getId())) {
-            throw new UserNotFoundException("User not found " + user.getId());
+            return null;
         }
+
         User userToReturn = users.get(user.getId());
         users.remove(user.getId());
 
@@ -65,22 +64,15 @@ public class InMemoryUserRepo implements UserRepo {
 
     @Override
     public User getUser(Long userId) {
-        return Optional.ofNullable(users.get(userId))
-                .orElseThrow(() -> new UserNotFoundException("User not found: " + userId));
+        return users.get(userId);
     }
 
-    // todo:
-    // Отсутствие данных при выборке - это ошибка в логике - с точки зрения хранилища ничего страшного нет,
-    // просто нет данных. Но именно сервис должен воспринять это как ошибку и кинуть эксепшен. Как-то так )
     @Override
     public User addFriend(Long userId, Long friendId) throws UserNotFoundException {
         log.info("in memory Adding friend {} to user {}", friendId, userId);
 
         if (!users.containsKey(userId) || !users.containsKey(friendId)) {
-            log.warn("UserNotFoundException use {} friend {}", friendId, userId);
-            throw new UserNotFoundException("User or friend not found");
-        } else {
-            log.info("User and friend found");
+            return null;
         }
 
         friendsIds.get(userId).add(friendId);
@@ -92,7 +84,7 @@ public class InMemoryUserRepo implements UserRepo {
     @Override
     public User removeFriend(Long userId, Long friendId) throws UserNotFoundException {
         if (!users.containsKey(userId) || !users.containsKey(friendId)) {
-            throw new UserNotFoundException("User or friend not found");
+           return null;
         }
 
         friendsIds.get(userId).remove(friendId);
@@ -104,7 +96,7 @@ public class InMemoryUserRepo implements UserRepo {
     @Override
     public List<User> getFriends(Long userId) throws UserNotFoundException {
         if (!users.containsKey(userId)) {
-            throw new UserNotFoundException("User or friend not found");
+            return null;
         }
 
         Set<Long> friendIds = friendsIds.get(userId);
@@ -118,13 +110,6 @@ public class InMemoryUserRepo implements UserRepo {
 
     @Override
     public List<User> getCommonFriends(Long userId, Long friendId) throws UserNotFoundException {
-        final User user = users.get(userId);
-        final User friend = users.get(friendId);
-
-        if (user == null || friend == null) {
-            throw new UserNotFoundException("User not found");
-        }
-
         Set<Long> userFriends = friendsIds.get(userId);
         Set<Long> friendFriends = friendsIds.get(friendId);
 

@@ -27,14 +27,25 @@ public class UserService {
     }
 
     public User updateUser(@RequestBody User user) {
+        if (userRepo.getUser(user.getId()) == null) {
+            throw new UserNotFoundException("User not found" + user.getId());
+        }
+
         return userRepo.updateUser(user);
     }
 
     public User deleteUser(@RequestBody User user) {
+        if (userRepo.getUser(user.getId()) == null) {
+            throw new UserNotFoundException("User not found" + user.getId());
+        }
+
         return userRepo.deleteUser(user);
     }
 
     public User getUser(Long userId) {
+        if (userRepo.getUser(userId) == null) {
+            throw new UserNotFoundException("User not found" + userId);
+        }
         return userRepo.getUser(userId);
     }
 
@@ -47,21 +58,15 @@ public class UserService {
 
         if (userId.equals(friendId)) {
             log.warn("User and friend are the same user {} friend {}", friendId, userId);
-
             throw new UserNotFoundException("User and friend are the same");
         }
 
-        try {
-            final User user = userRepo.getUser(userId);
-            final User friend = userRepo.getUser(friendId);
-        } catch (Exception e) {
+        if (userRepo.getUser(userId) == null || userRepo.getUser(friendId) == null) {
             log.warn("UserNotFoundException use {} friend {}", friendId, userId);
             throw new UserNotFoundException("User or friend not found");
-        } finally {
-            userRepo.addFriend(userId, friendId);
         }
 
-        return userRepo.getUser(userId);
+        return userRepo.addFriend(userId, friendId);
     }
 
     public User removeFriend(Long userId, Long friendId) {
