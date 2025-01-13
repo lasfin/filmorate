@@ -3,14 +3,12 @@ package ru.yandex.practicum.filmorate.repository.film;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RequestBody;
 import ru.yandex.practicum.filmorate.controller.FilmController;
 import ru.yandex.practicum.filmorate.exceptions.film.FilmNotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 
-import java.net.URI;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -21,7 +19,7 @@ public class InMemoryFilmRepo implements FilmRepo {
     private ArrayList<Film> films = new ArrayList<>();
     private HashMap<Long, Set<Long>> filmLikes = new HashMap<>();
 
-    public ResponseEntity<Film> createFilm(@Valid @RequestBody Film filmBody) {
+    public Film createFilm(@Valid @RequestBody Film filmBody) {
         Film newFilm = new Film(
                 nextId++,
                 filmBody.getName(),
@@ -34,12 +32,18 @@ public class InMemoryFilmRepo implements FilmRepo {
         log.info("Film created: {}", newFilm);
         filmLikes.put(newFilm.getId(), new HashSet<>());
 
-        return ResponseEntity
-                .created(URI.create("/films/" + newFilm.getId()))
-                .body(newFilm);
+        return newFilm;
     }
 
-    public ResponseEntity<Film> updateFilm(@RequestBody Film film) {
+    public Film getFilm(Long filmId) {
+        Optional<Film> film = films.stream()
+                .filter(f -> Objects.equals(f.getId(), filmId))
+                .findFirst();
+
+        return film.orElse(null);
+    }
+
+    public Film updateFilm(@RequestBody Film film) {
         Film filmToUpdate = films.stream()
                 .filter(f -> Objects.equals(f.getId(), film.getId()))
                 .findFirst()
@@ -52,53 +56,61 @@ public class InMemoryFilmRepo implements FilmRepo {
 
         log.info("Film updated: {}", filmToUpdate);
 
-        return ResponseEntity.ok(filmToUpdate);
+        return filmToUpdate;
     }
 
-    public ResponseEntity<Film> deleteFilm(@RequestBody Film film) {
+    public Film deleteFilm(@RequestBody Film film) {
+        Optional<Film> filmToDelete = films.stream()
+                .filter(f -> Objects.equals(f.getId(), film.getId()))
+                .findFirst();
+
+        if (filmToDelete.isEmpty()) {
+            return null;
+        }
+
         films.remove(film);
 
-        return ResponseEntity.noContent().build();
+        return filmToDelete.get();
     }
 
-    public ResponseEntity<List<Film>> getFilms() {
-        return ResponseEntity.ok(films);
+    public List<Film> getFilms() {
+        return films;
     }
 
     @Override
-    public ResponseEntity<Film> addLike(Long filmId, Long userId) {
-        Film film = films.stream()
+    public Film addLike(Long filmId, Long userId) {
+        Optional<Film> film = films.stream()
                 .filter(f -> Objects.equals(f.getId(), filmId))
-                .findFirst()
-                .orElseThrow(() -> new FilmNotFoundException("Film not found"));
+                .findFirst();
 
-        // check if user exists
-
+        if (film.isEmpty()) {
+            return null;
+        }
 
         filmLikes.get(filmId).add(userId);
         log.info("User {} liked film {}", userId, filmId);
 
-        return ResponseEntity.ok(film);
+        return film.get();
     }
 
     @Override
-    public ResponseEntity<Film> removeLike(Long filmId, Long userId) {
+    public Film removeLike(Long filmId, Long userId) {
         Film film = films.stream()
                 .filter(f -> Objects.equals(f.getId(), filmId))
                 .findFirst()
                 .orElseThrow(() -> new FilmNotFoundException("Film not found"));
 
         if (!filmLikes.get(filmId).remove(userId)) {
-            throw new FilmNotFoundException("Like not found");
+            return null;
         }
 
         log.info("User {} removed like from film {}", userId, filmId);
 
-        return ResponseEntity.ok(film);
+        return film;
     }
 
     @Override
-    public ResponseEntity<List<Film>> getPopularFilms(Integer count) {
+    public List<Film> getPopularFilms(Integer count) {
         List<Film> popularFilms = films.stream()
                 .sorted((f1, f2) -> Integer.compare(
                         filmLikes.get(f2.getId()).size(),
@@ -106,7 +118,7 @@ public class InMemoryFilmRepo implements FilmRepo {
                 .limit(count)
                 .collect(Collectors.toList());
 
-        return ResponseEntity.ok(popularFilms);
+        return popularFilms;
     }
 
 }

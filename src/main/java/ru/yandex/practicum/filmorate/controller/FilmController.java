@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exceptions.BadRequestResponse;
@@ -13,9 +14,10 @@ import ru.yandex.practicum.filmorate.exceptions.user.UserNotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
 
+import java.net.URI;
 import java.util.List;
 
-@RestController
+@Controller
 @RequestMapping("/films")
 public class FilmController {
     private final FilmService filmService;
@@ -27,42 +29,45 @@ public class FilmController {
 
     @PostMapping
     public ResponseEntity<Film> createFilm(@Valid @RequestBody Film filmBody) {
-        return filmService.createFilm(filmBody);
+        Film film = filmService.createFilm(filmBody);
+        URI location = URI.create("/films/" + film.getId());
+
+        return ResponseEntity.created(location).body(film);
     }
 
     @PutMapping()
     public ResponseEntity<Film> updateFilm(@RequestBody Film film) {
-        return filmService.updateFilm(film);
+        return ResponseEntity.ok(filmService.updateFilm(film));
     }
 
     @DeleteMapping()
     public ResponseEntity<Film> deleteFilm(@RequestBody Film film) {
-        return filmService.deleteFilm(film);
+        return ResponseEntity.ok(filmService.deleteFilm(film));
     }
 
     @GetMapping
     public ResponseEntity<List<Film>> getFilms() {
-        return filmService.getFilms();
+        return ResponseEntity.ok(filmService.getFilms());
     }
 
     @PutMapping("/{id}/like/{userId}")
     public ResponseEntity<Film> addLike(
             @PathVariable Long id,
             @PathVariable Long userId) {
-        return filmService.addLike(id, userId);
+        return ResponseEntity.ok(filmService.addLike(id, userId));
     }
 
     @DeleteMapping("/{id}/like/{userId}")
     public ResponseEntity<Film> removeLike(
             @PathVariable Long id,
             @PathVariable Long userId) {
-        return filmService.removeLike(id, userId);
+        return ResponseEntity.ok(filmService.removeLike(id, userId));
     }
 
     @GetMapping("/popular")
     public ResponseEntity<List<Film>> getPopularFilms(
             @RequestParam(defaultValue = "10") Integer count) {
-        return filmService.getPopularFilms(count);
+        return ResponseEntity.ok(filmService.getPopularFilms(count));
     }
 
     @ExceptionHandler
