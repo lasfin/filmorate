@@ -80,7 +80,7 @@ public class UserService {
         final User user = userRepo.getUser(userId);
 
         if (user == null) {
-            throw new UserNotFoundException("User not found");
+            throw new UserNotFoundException("User not found " + userId);
         }
 
         return userRepo.getFriends(userId);

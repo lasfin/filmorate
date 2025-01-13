@@ -39,7 +39,7 @@ public class InMemoryUserRepo implements UserRepo {
         if (!users.containsKey(user.getId())) {
             log.warn("UserNotFoundException user {}", user.getId());
 
-            throw new UserNotFoundException("User not found");
+            throw new UserNotFoundException("User not found" + user.getId());
         }
 
         users.put(user.getId(), user);
@@ -50,7 +50,7 @@ public class InMemoryUserRepo implements UserRepo {
     @Override
     public User deleteUser(User user) {
         if (!users.containsKey(user.getId())) {
-            throw new UserNotFoundException("User not found");
+            throw new UserNotFoundException("User not found " + user.getId());
         }
         User userToReturn = users.get(user.getId());
         users.remove(user.getId());
@@ -66,7 +66,7 @@ public class InMemoryUserRepo implements UserRepo {
     @Override
     public User getUser(Long userId) {
         return Optional.ofNullable(users.get(userId))
-                .orElseThrow(() -> new UserNotFoundException("User not found"));
+                .orElseThrow(() -> new UserNotFoundException("User not found: " + userId));
     }
 
     // todo:

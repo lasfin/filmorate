@@ -43,7 +43,7 @@ public class FilmService {
     public ResponseEntity<Film> addLike(Long filmId, Long userId) {
         User user = userRepo.getUser(userId);
         if (user == null) {
-            throw new UserNotFoundException("User not found");
+            throw new UserNotFoundException("User not found: " + userId);
         }
         return filmRepo.addLike(filmId, userId);
     }
