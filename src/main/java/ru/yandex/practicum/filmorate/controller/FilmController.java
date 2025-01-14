@@ -1,72 +1,91 @@
 package ru.yandex.practicum.filmorate.controller;
 
 import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.annotation.*;
+import ru.yandex.practicum.filmorate.exceptions.BadRequestResponse;
+import ru.yandex.practicum.filmorate.exceptions.NotFoundResponse;
+import ru.yandex.practicum.filmorate.exceptions.film.FilmNotFoundException;
+import ru.yandex.practicum.filmorate.exceptions.user.UserNotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.service.FilmService;
 
 import java.net.URI;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
-@RestController
+@Controller
 @RequestMapping("/films")
-@RequiredArgsConstructor
 public class FilmController {
-    private static final Logger log = LoggerFactory.getLogger(FilmController.class);
-    private Long nextId = 1L;
-    private ArrayList<Film> films = new ArrayList<>();
+    private final FilmService filmService;
+
+    @Autowired
+    public FilmController(FilmService filmService) {
+        this.filmService = filmService;
+    }
 
     @PostMapping
     public ResponseEntity<Film> createFilm(@Valid @RequestBody Film filmBody) {
-        Film newFilm = new Film(
-                nextId++,
-                filmBody.getName(),
-                filmBody.getDescription(),
-                filmBody.getReleaseDate(),
-                filmBody.getDuration()
-        );
-        films.add(newFilm);
+        Film film = filmService.createFilm(filmBody);
+        URI location = URI.create("/films/" + film.getId());
 
-        log.info("Film created: {}", newFilm);
-
-        return ResponseEntity
-                .created(URI.create("/films/" + newFilm.getId()))
-                .body(newFilm);
+        return ResponseEntity.created(location).body(film);
     }
 
     @PutMapping()
     public ResponseEntity<Film> updateFilm(@RequestBody Film film) {
-        Film filmToUpdate = films.stream()
-                .filter(f -> Objects.equals(f.getId(), film.getId()))
-                .findFirst()
-                .orElseThrow(() -> new RuntimeException("Film not found"));
-
-
-        filmToUpdate.setName(film.getName());
-        filmToUpdate.setDescription(film.getDescription());
-        filmToUpdate.setReleaseDate(film.getReleaseDate());
-        filmToUpdate.setDuration(film.getDuration());
-
-        log.info("Film updated: {}", filmToUpdate);
-
-        return ResponseEntity.ok(filmToUpdate);
+        return ResponseEntity.ok(filmService.updateFilm(film));
     }
 
     @DeleteMapping()
     public ResponseEntity<Film> deleteFilm(@RequestBody Film film) {
-        films.remove(film);
-
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(filmService.deleteFilm(film));
     }
 
     @GetMapping
-    public  ResponseEntity<List<Film>> getFilms() {
-        return ResponseEntity.ok(films);
+    public ResponseEntity<List<Film>> getFilms() {
+        return ResponseEntity.ok(filmService.getFilms());
+    }
+
+    @PutMapping("/{id}/like/{userId}")
+    public ResponseEntity<Film> addLike(
+            @PathVariable Long id,
+            @PathVariable Long userId) {
+        return ResponseEntity.ok(filmService.addLike(id, userId));
+    }
+
+    @DeleteMapping("/{id}/like/{userId}")
+    public ResponseEntity<Film> removeLike(
+            @PathVariable Long id,
+            @PathVariable Long userId) {
+        return ResponseEntity.ok(filmService.removeLike(id, userId));
+    }
+
+    @GetMapping("/popular")
+    public ResponseEntity<List<Film>> getPopularFilms(
+            @RequestParam(defaultValue = "10") Integer count) {
+        return ResponseEntity.ok(filmService.getPopularFilms(count));
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ErrorResponse handleException(final FilmNotFoundException e) {
+        return new NotFoundResponse("Not found", e.getMessage());
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ErrorResponse handleException(final UserNotFoundException e) {
+        return new NotFoundResponse("Not found", e.getMessage());
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleException(final Exception e) {
+        return new BadRequestResponse("Bad request", e.getMessage());
     }
 
 }

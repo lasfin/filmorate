@@ -5,7 +5,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import ru.yandex.practicum.filmorate.exceptions.user.UserNotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.service.UserService;
+import ru.yandex.practicum.filmorate.repository.user.InMemoryUserRepo;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -15,16 +18,27 @@ import static org.junit.jupiter.api.Assertions.*;
 class UserControllerTest {
     private UserController userController;
     private User testUser;
+    private User secondTestUser;
+    private UserService userService;
 
     @BeforeEach
     void setUp() {
-        userController = new UserController();
+        userService = new UserService(new InMemoryUserRepo());
+        userController = new UserController(userService);
         testUser = new User(
                 1,
                 "test@email.com",
                 "testLogin",
                 "Test Name",
                 LocalDate.of(1990, 1, 1)
+        );
+
+        secondTestUser = new User(
+                2,
+                "test@email.com",
+                "testLogin",
+                "Second name",
+                LocalDate.of(1991, 1, 1)
         );
     }
 
@@ -89,13 +103,13 @@ class UserControllerTest {
     }
 
     @Test
-    void deleteUser_ShouldReturnNoContentStatus() {
+    void deleteUser_ShouldWork() {
         ResponseEntity<User> createResponse = userController.createUser(testUser);
         User createdUser = createResponse.getBody();
 
-        ResponseEntity<User> deleteResponse = userController.deleteFilm(createdUser);
+        ResponseEntity<User> deleteResponse = userController.deleteUser(createdUser);
 
-        assertEquals(HttpStatus.NO_CONTENT, deleteResponse.getStatusCode());
+        assertEquals(HttpStatus.OK, deleteResponse.getStatusCode());
 
         ResponseEntity<List<User>> getResponse = userController.getUsers();
         assertTrue(getResponse.getBody().isEmpty());
@@ -113,13 +127,7 @@ class UserControllerTest {
     void getUsers_WithMultipleUsers_ShouldReturnAllUsers() {
         // Create multiple users
         userController.createUser(testUser);
-        userController.createUser(new User(
-                1,
-                "test2@email.com",
-                "testLogin2",
-                "Test Name 2",
-                LocalDate.of(1992, 1, 1)
-        ));
+        userController.createUser(secondTestUser);
 
         ResponseEntity<List<User>> response = userController.getUsers();
 
@@ -142,5 +150,59 @@ class UserControllerTest {
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
         assertNotNull(response.getBody());
         assertEquals("testLogin", response.getBody().getName());  // Name should default to login if null
+    }
+
+    @Test
+    void addFriend_ShouldReturnOkStatus() {
+        userController.createUser(testUser);
+        userController.createUser(secondTestUser);
+
+        ResponseEntity<User> response = userController.addFriend(1L, 2L);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+    }
+
+    @Test
+    void addFriend_WithSameIds_ShouldThrowException() {
+        assertThrows(RuntimeException.class, () -> userController.addFriend(1L, 1L));
+    }
+
+    @Test
+    void addFriend_WithNonExistingUser_ShouldThrowException() {
+        assertThrows(UserNotFoundException.class, () -> userController.addFriend(1L, 2L));
+    }
+
+    @Test
+    void getFriends_ShouldReturnCommonFriends() {
+        userController.createUser(testUser);
+        userController.createUser(secondTestUser);
+
+        User userWithNullName = new User(
+                3,
+                "test@email.com",
+                "testLogin",
+                "someName",
+                LocalDate.of(1992, 1, 1)
+        );
+
+        userController.createUser(userWithNullName);
+        // add friend to both of them
+        userController.addFriend(1L, 3L);
+        userController.addFriend(2L, 3L);
+
+        ResponseEntity<List<User>> response = userController.getCommonFriends(1L, 2L);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(1, response.getBody().size());
+        assertEquals(3L, response.getBody().get(0).getId());
+    }
+
+    @Test
+    void removeFriend_ShouldReturnOkStatus() {
+        userController.createUser(testUser);
+        userController.createUser(secondTestUser);
+
+        userController.addFriend(1L, 2L);
+
+        ResponseEntity<User> response = userController.removeFriend(1L, 2L);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
     }
 }
