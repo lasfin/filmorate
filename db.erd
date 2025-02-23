@@ -1,0 +1,50 @@
+erDiagram
+    users ||--o{ friendships : has
+    users ||--o{ film_likes : makes
+    films ||--o{ film_likes : receives
+    films ||--o{ film_genres : has
+    films ||--|| mpa_ratings : has
+    genres ||--o{ film_genres : belongs_to
+
+    users {
+        bigint user_id PK
+        string email
+        string login
+        string name
+        date birthday
+    }
+
+    films {
+        bigint film_id PK
+        string name
+        string description
+        date release_date
+        int duration
+        int mpa_rating_id FK
+    }
+
+    mpa_ratings {
+        int mpa_rating_id PK
+        string name
+    }
+
+    genres {
+        int genre_id PK
+        string name
+    }
+
+    film_genres {
+        bigint film_id PK,FK
+        int genre_id PK,FK
+    }
+
+    film_likes {
+        bigint film_id PK,FK
+        bigint user_id PK,FK
+    }
+
+    friendships {
+        bigint user_id PK,FK
+        bigint friend_id PK,FK
+        boolean status
+    }
