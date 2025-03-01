@@ -96,7 +96,7 @@ public class UserService {
         final User friend = userRepo.getUser(friendId);
 
         if (user == null || friend == null) {
-            throw new UserNotFoundException("User or friend not found");
+            throw new UserNotFoundException("Friend or user not found");
         }
 
         return userRepo.getCommonFriends(userId, friendId);
