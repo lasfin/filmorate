@@ -1,6 +1,5 @@
 package ru.yandex.practicum.filmorate.repository.genre;
 
-import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.model.Genre;
 
@@ -10,7 +9,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Map;
 
-@Primary
 @Repository
 public class InMemoryGenreRepo implements GenreRepo {
     private final Map<Integer, Genre> genres = new HashMap<>();

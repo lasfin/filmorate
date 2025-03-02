@@ -22,13 +22,13 @@ public class H2MpaRepo implements MpaRepo {
 
     @Override
     public List<MpaRating> getAllMpa() {
-        String sql = "SELECT * FROM mpa_ratings ORDER BY id";
+        String sql = "SELECT * FROM mpa_ratings ORDER BY mpa_rating_id";
         return jdbcTemplate.query(sql, new MpaRowMapper());
     }
 
     @Override
     public Optional<MpaRating> getMpaById(Integer id) {
-        String sql = "SELECT * FROM mpa_ratings WHERE id = ?";
+        String sql = "SELECT * FROM mpa_ratings WHERE mpa_rating_id = ?";
         List<MpaRating> mpaList = jdbcTemplate.query(sql, new MpaRowMapper(), id);
         if (mpaList.isEmpty()) {
             return Optional.empty();

@@ -1,20 +1,24 @@
 -- Movie Social Network Database Schema
+DROP TABLE IF EXISTS friendships;
+DROP TABLE IF EXISTS film_likes;
+DROP TABLE IF EXISTS film_genres;
+DROP TABLE IF EXISTS users;
 
 -- Create mpa_ratings table
 CREATE TABLE IF NOT EXISTS mpa_ratings (
-    mpa_rating_id INT PRIMARY KEY,
+    mpa_rating_id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(10) NOT NULL UNIQUE
 );
 
 -- Create genres table
 CREATE TABLE IF NOT EXISTS genres (
-    genre_id INT PRIMARY KEY,
+    genre_id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(50) NOT NULL UNIQUE
 );
 
 -- Create users table
 CREATE TABLE IF NOT EXISTS users (
-    user_id BIGINT PRIMARY KEY,
+    user_id BIGINT AUTO_INCREMENT PRIMARY KEY,
     email VARCHAR(255) NOT NULL UNIQUE,
     login VARCHAR(100) NOT NULL UNIQUE,
     name VARCHAR(100) NOT NULL,
@@ -23,7 +27,7 @@ CREATE TABLE IF NOT EXISTS users (
 
 -- Create films table
 CREATE TABLE IF NOT EXISTS films (
-    film_id BIGINT PRIMARY KEY,
+    film_id BIGINT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
     description TEXT,
     release_date DATE,
@@ -34,7 +38,7 @@ CREATE TABLE IF NOT EXISTS films (
 
 -- Create film_genres junction table
 CREATE TABLE IF NOT EXISTS film_genres (
-    film_id BIGINT,
+    film_id BIGINT AUTO_INCREMENT,
     genre_id INT,
     PRIMARY KEY (film_id, genre_id),
     FOREIGN KEY (film_id) REFERENCES films(film_id) ON DELETE CASCADE,

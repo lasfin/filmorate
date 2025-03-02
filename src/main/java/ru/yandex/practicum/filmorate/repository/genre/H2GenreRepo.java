@@ -1,6 +1,7 @@
 package ru.yandex.practicum.filmorate.repository.genre;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Primary;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
@@ -11,6 +12,7 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 
+@Primary
 @Component
 public class H2GenreRepo implements GenreRepo {
     private final JdbcTemplate jdbcTemplate;
@@ -60,7 +62,7 @@ public class H2GenreRepo implements GenreRepo {
         @Override
         public Genre mapRow(ResultSet rs, int rowNum) throws SQLException {
             Genre genre = new Genre();
-            genre.setId(rs.getLong("id"));
+            genre.setId(rs.getLong("genre_id"));
             genre.setName(rs.getString("name"));
             return genre;
         }

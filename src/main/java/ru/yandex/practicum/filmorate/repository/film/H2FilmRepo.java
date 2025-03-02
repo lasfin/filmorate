@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.repository.film;
 
+import org.springframework.context.annotation.Primary;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
@@ -17,6 +18,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 
+@Primary
 @Repository
 public class H2FilmRepo implements FilmRepo {
 

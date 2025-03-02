@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.repository.user;
 
+import org.springframework.context.annotation.Primary;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
@@ -14,6 +15,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 
+@Primary
 @Repository
 public class H2UserRepo implements UserRepo {
 
@@ -25,6 +27,10 @@ public class H2UserRepo implements UserRepo {
 
     @Override
     public User createUser(User user) {
+        // Get the next ID from a sequence or max + 1
+        Long nextId = jdbcTemplate.queryForObject("SELECT COALESCE(MAX(user_id), 0) + 1 FROM users", Long.class);
+        user.setId(nextId);
+
         KeyHolder keyHolder = new GeneratedKeyHolder();
 
         jdbcTemplate.update(connection -> {
