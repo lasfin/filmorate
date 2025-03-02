@@ -15,7 +15,7 @@ import java.util.HashSet;
 @NoArgsConstructor
 @AllArgsConstructor
 public class User {
-    private long id;
+    private Long id;
     @NotEmpty(message = "Email cannot be empty")
     @Email(message = "Must be a valid email address")
     private String email;

@@ -2,6 +2,7 @@ package ru.yandex.practicum.filmorate.repository.user;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exceptions.user.UserNotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
@@ -9,6 +10,7 @@ import ru.yandex.practicum.filmorate.model.User;
 import java.util.*;
 
 @Component
+@Primary
 public class InMemoryUserRepo implements UserRepo {
     private static final Logger log = LoggerFactory.getLogger(InMemoryUserRepo.class);
     private Long nextId = 0L;

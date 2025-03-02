@@ -3,6 +3,7 @@ package ru.yandex.practicum.filmorate.repository.film;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RequestBody;
 import ru.yandex.practicum.filmorate.controller.FilmController;
@@ -12,6 +13,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Component
+@Primary
 public class InMemoryFilmRepo implements FilmRepo {
     private static final Logger log = LoggerFactory.getLogger(FilmController.class);
     private Long nextId = 1L;

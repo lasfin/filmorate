@@ -31,7 +31,7 @@ class UserControllerTest {
         HashSet<Long> friends = new HashSet<>();
 
         testUser = new User(
-                1,
+                1L,
                 "test@email.com",
                 "testLogin",
                 "Test Name",
@@ -43,7 +43,7 @@ class UserControllerTest {
         HashSet<Long> secondFriends = new HashSet<>();
 
         secondTestUser = new User(
-                2,
+                2L,
                 "test@email.com",
                 "testLogin",
                 "Second name",
@@ -159,7 +159,7 @@ class UserControllerTest {
         HashSet<Long> friends = new HashSet<>();
 
         User userWithNullName = new User(
-                1,
+                1L,
                 "test@email.com",
                 "testLogin",
                 null,
@@ -204,7 +204,7 @@ class UserControllerTest {
         HashSet<Long> friends = new HashSet<>();
 
         User thirdUser = new User(
-                3,
+                3L,
                 "test@email.com",
                 "testLogin",
                 "someName",
