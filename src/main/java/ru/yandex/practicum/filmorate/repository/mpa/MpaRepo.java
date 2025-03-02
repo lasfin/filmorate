@@ -7,5 +7,6 @@ import java.util.Optional;
 
 public interface MpaRepo {
     List<MpaRating> getAllMpa();
+
     Optional<MpaRating> getMpaById(Integer id);
 }
