@@ -24,7 +24,10 @@ public class InMemoryFilmRepo implements FilmRepo {
                 filmBody.getName(),
                 filmBody.getDescription(),
                 filmBody.getReleaseDate(),
-                filmBody.getDuration()
+                filmBody.getDuration(),
+                filmBody.getMpaRating(),
+                filmBody.getGenres(),
+                filmBody.getLikes()
         );
         films.add(newFilm);
 

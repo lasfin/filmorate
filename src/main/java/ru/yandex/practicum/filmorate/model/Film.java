@@ -9,6 +9,8 @@ import jakarta.validation.constraints.Min;
 import ru.yandex.practicum.filmorate.model.validations.AfterFirstFilm;
 
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 
 @Data
 @NoArgsConstructor
@@ -26,4 +28,8 @@ public class Film {
     private LocalDate releaseDate;
     @Min(value = 1, message = "Duration should be greater than 0")
     private int duration;
+
+    private MpaRating mpaRating;
+    private Set<Genre> genres = new HashSet<>();
+    private Set<Long> likes = new HashSet<>();
 }
