@@ -1,6 +1,7 @@
 package ru.yandex.practicum.filmorate.repository.user;
 
 import org.springframework.context.annotation.Primary;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
@@ -90,17 +91,22 @@ public class H2UserRepo implements UserRepo {
 
     @Override
     public User getUser(Long userId) {
-        User user = jdbcTemplate.queryForObject(
-                "SELECT * FROM users WHERE user_id = ?",
-                this::mapRowToUser,
-                userId
-        );
+        try {
+            User user = jdbcTemplate.queryForObject(
+                    "SELECT * FROM users WHERE user_id = ?",
+                    this::mapRowToUser,
+                    userId
+            );
 
-        if (user != null) {
-            loadUserFriends(user);
+            if (user != null) {
+                loadUserFriends(user);
+            }
+
+            return user;
+        } catch (EmptyResultDataAccessException e) {
+            // No user found with the given ID
+            return null;
         }
-
-        return user;
     }
 
     @Override

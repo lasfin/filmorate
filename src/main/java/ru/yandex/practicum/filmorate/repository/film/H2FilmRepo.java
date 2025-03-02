@@ -9,10 +9,7 @@ import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.MpaRating;
 
-import java.sql.Date;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -42,19 +39,31 @@ public class H2FilmRepo implements FilmRepo {
             ps.setString(2, film.getDescription());
             ps.setDate(3, Date.valueOf(film.getReleaseDate()));
             ps.setInt(4, film.getDuration());
-            ps.setLong(5, film.getMpa().getId());
+
+            // Handle null MPA case
+            if (film.getMpa() != null) {
+                ps.setLong(5, film.getMpa().getId());
+            } else {
+                ps.setNull(5, Types.BIGINT);
+            }
             return ps;
         }, keyHolder);
 
         Long filmId = Objects.requireNonNull(keyHolder.getKey()).longValue();
         film.setId(filmId);
 
+        // Initialize genres if null
+        if (film.getGenres() == null) {
+            film.setGenres(new HashSet<>());
+        }
+
         // Save film genres if present
-        if (film.getGenres() != null && !film.getGenres().isEmpty()) {
+        if (!film.getGenres().isEmpty()) {
             saveFilmGenres(film);
         }
 
-        return film;
+        // Return a fully loaded film
+        return getFilm(filmId);
     }
 
     @Override

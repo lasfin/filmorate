@@ -38,7 +38,7 @@ CREATE TABLE IF NOT EXISTS films (
 
 -- Create film_genres junction table
 CREATE TABLE IF NOT EXISTS film_genres (
-    film_id BIGINT AUTO_INCREMENT,
+    film_id BIGINT,
     genre_id INT,
     PRIMARY KEY (film_id, genre_id),
     FOREIGN KEY (film_id) REFERENCES films(film_id) ON DELETE CASCADE,
