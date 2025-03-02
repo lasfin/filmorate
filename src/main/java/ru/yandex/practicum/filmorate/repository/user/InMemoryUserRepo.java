@@ -27,7 +27,8 @@ public class InMemoryUserRepo implements UserRepo {
                 user.getEmail(),
                 user.getLogin(),
                 user.getName(),
-                user.getBirthday()
+                user.getBirthday(),
+                user.getFriends()
         );
         users.put(nextIdUpdated, newUser);
 

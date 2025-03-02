@@ -9,12 +9,13 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.util.HashSet;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class User {
-    private long id;
+    private Long id;
     @NotEmpty(message = "Email cannot be empty")
     @Email(message = "Must be a valid email address")
     private String email;
@@ -33,4 +34,6 @@ public class User {
 
         return name;
     }
+
+    private HashSet<Long> friends;
 }
