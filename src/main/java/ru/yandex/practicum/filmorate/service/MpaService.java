@@ -9,7 +9,7 @@ import ru.yandex.practicum.filmorate.repository.mpa.MpaRepo;
 import java.util.List;
 
 @Service
-public class MpaService{
+public class MpaService {
     private final MpaRepo mpaRepo;
 
     @Autowired
