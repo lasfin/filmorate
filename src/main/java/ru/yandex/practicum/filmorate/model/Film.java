@@ -29,7 +29,7 @@ public class Film {
     @Min(value = 1, message = "Duration should be greater than 0")
     private int duration;
 
-    private MpaRating mpaRating;
+    private MpaRating mpa;
     private Set<Genre> genres = new HashSet<>();
     private Set<Long> likes = new HashSet<>();
 }

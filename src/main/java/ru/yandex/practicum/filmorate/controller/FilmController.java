@@ -27,6 +27,12 @@ public class FilmController {
         this.filmService = filmService;
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<Film> getFilmById(@PathVariable Long id) {
+        Film film = filmService.getFilmById(id);
+        return ResponseEntity.ok(film);
+    }
+
     @PostMapping
     public ResponseEntity<Film> createFilm(@Valid @RequestBody Film filmBody) {
         Film film = filmService.createFilm(filmBody);

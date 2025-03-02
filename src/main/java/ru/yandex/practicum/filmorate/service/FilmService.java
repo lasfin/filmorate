@@ -43,6 +43,14 @@ public class FilmService {
         return filmRepo.deleteFilm(film);
     }
 
+    public Film getFilmById(Long id) {
+        Film film = filmRepo.getFilm(id);
+        if (film == null) {
+            throw new FilmNotFoundException("Film not found: " + id);
+        }
+        return film;
+    }
+
     public List<Film> getFilms() {
         return filmRepo.getFilms();
     }

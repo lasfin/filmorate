@@ -40,7 +40,7 @@ public class H2FilmRepo implements FilmRepo {
             ps.setString(2, film.getDescription());
             ps.setDate(3, Date.valueOf(film.getReleaseDate()));
             ps.setInt(4, film.getDuration());
-            ps.setLong(5, film.getMpaRating().getId());
+            ps.setLong(5, film.getMpa().getId());
             return ps;
         }, keyHolder);
 
@@ -63,7 +63,7 @@ public class H2FilmRepo implements FilmRepo {
                 film.getDescription(),
                 Date.valueOf(film.getReleaseDate()),
                 film.getDuration(),
-                film.getMpaRating().getId(),
+                film.getMpa().getId(),
                 film.getId()
         );
 
@@ -176,7 +176,7 @@ public class H2FilmRepo implements FilmRepo {
         MpaRating mpa = new MpaRating();
         mpa.setId(rs.getLong("mpa_rating_id"));
         mpa.setName(rs.getString("mpa_name"));
-        film.setMpaRating(mpa);
+        film.setMpa(mpa);
 
         // Genres and likes will be loaded separately
         film.setGenres(new HashSet<>());

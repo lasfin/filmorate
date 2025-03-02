@@ -61,7 +61,7 @@ class FilmControllerTest {
         assertEquals(testFilm.getDescription(), createdFilm.getDescription());
         assertEquals(testFilm.getReleaseDate(), createdFilm.getReleaseDate());
         assertEquals(testFilm.getDuration(), createdFilm.getDuration());
-        assertEquals(testFilm.getMpaRating(), createdFilm.getMpaRating());
+        assertEquals(testFilm.getMpa(), createdFilm.getMpa());
         assertEquals(testFilm.getGenres(), createdFilm.getGenres());
         assertTrue(createdFilm.getLikes().isEmpty());
         assertEquals(201, response.getStatusCodeValue());
@@ -88,7 +88,7 @@ class FilmControllerTest {
         filmToUpdate.setName("Updated Name");
         filmToUpdate.setDescription("Updated Description");
         // Update new fields
-        filmToUpdate.setMpaRating(new MpaRating(2L, "PG"));
+        filmToUpdate.setMpa(new MpaRating(2L, "PG"));
         Set<Genre> updatedGenres = new HashSet<>();
         updatedGenres.add(new Genre(2L, "Drama"));
         filmToUpdate.setGenres(updatedGenres);
@@ -105,7 +105,7 @@ class FilmControllerTest {
         assertNotNull(updatedFilm);
         assertEquals("Updated Name", updatedFilm.getName());
         assertEquals("Updated Description", updatedFilm.getDescription());
-        assertEquals(new MpaRating(2L, "PG"), updatedFilm.getMpaRating());
+        assertEquals(new MpaRating(2L, "PG"), updatedFilm.getMpa());
         assertEquals(updatedGenres, updatedFilm.getGenres());
         assertEquals(likes, updatedFilm.getLikes());
         assertEquals(200, updateResponse.getStatusCodeValue());
