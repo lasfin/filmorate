@@ -111,10 +111,4 @@ public class FilmController {
     public ErrorResponse handleRuntimeException(final RuntimeException e) {
         return new BadRequestResponse("Internal server error", e.getMessage());
     }
-
-    @ExceptionHandler
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse handleBadRequestException(final Exception e) {
-        return new BadRequestResponse("Bad request", e.getMessage());
-    }
 }
