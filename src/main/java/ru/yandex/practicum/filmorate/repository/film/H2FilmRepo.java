@@ -13,6 +13,7 @@ import ru.yandex.practicum.filmorate.model.MpaRating;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
@@ -248,10 +249,11 @@ public class H2FilmRepo implements FilmRepo {
                         "FROM genres g " +
                         "JOIN film_genres fg ON g.genre_id = fg.genre_id " +
                         "WHERE fg.film_id = ? " +
-                        "ORDER BY g.genre_id DESC",
+                        "ORDER BY g.genre_id ASC",
                 (rs, rowNum) -> new Genre(rs.getLong("genre_id"), rs.getString("name")),
                 film.getId()
         );
+        genres.sort(Comparator.comparing(Genre::getId));
         film.setGenres(new HashSet<>(genres));
     }
 
