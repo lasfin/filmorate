@@ -248,8 +248,7 @@ public class H2FilmRepo implements FilmRepo {
                 "SELECT g.genre_id, g.name " +
                         "FROM genres g " +
                         "JOIN film_genres fg ON g.genre_id = fg.genre_id " +
-                        "WHERE fg.film_id = ? " +
-                        "ORDER BY g.genre_id ASC",
+                        "WHERE fg.film_id = ?",
                 (rs, rowNum) -> new Genre(rs.getLong("genre_id"), rs.getString("name")),
                 film.getId()
         );

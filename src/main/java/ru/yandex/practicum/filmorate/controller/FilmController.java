@@ -47,7 +47,7 @@ public class FilmController {
     public ResponseEntity<Film> updateFilm(@RequestBody Film film) {
         Film updatedFilm = filmService.updateFilm(film);
         if (updatedFilm == null) {
-            throw new RuntimeException("Film not found: " + film.getId());
+            throw new FilmNotFoundException("Film not found: " + film.getId());
         }
         return ResponseEntity.ok(updatedFilm);
     }
@@ -112,4 +112,9 @@ public class FilmController {
         return new BadRequestResponse("Bad request", e.getMessage());
     }
 
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ErrorResponse handleRuntimeException(final RuntimeException e) {
+        return new BadRequestResponse("Internal server error", e.getMessage());
+    }
 }
