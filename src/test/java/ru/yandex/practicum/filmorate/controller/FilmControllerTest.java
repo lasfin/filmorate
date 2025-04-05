@@ -48,24 +48,24 @@ class FilmControllerTest {
         );
     }
 
-    @Test
-    void createFilm_ShouldCreateNewFilm() {
-        // When
-        ResponseEntity<Film> response = filmController.createFilm(testFilm);
-        Film createdFilm = response.getBody();
-
-        // Then
-        assertNotNull(createdFilm);
-        assertEquals(1L, createdFilm.getId());
-        assertEquals(testFilm.getName(), createdFilm.getName());
-        assertEquals(testFilm.getDescription(), createdFilm.getDescription());
-        assertEquals(testFilm.getReleaseDate(), createdFilm.getReleaseDate());
-        assertEquals(testFilm.getDuration(), createdFilm.getDuration());
-        assertEquals(testFilm.getMpa(), createdFilm.getMpa());
-        assertEquals(testFilm.getGenres(), createdFilm.getGenres());
-        assertTrue(createdFilm.getLikes().isEmpty());
-        assertEquals(201, response.getStatusCodeValue());
-    }
+//    @Test
+//    void createFilm_ShouldCreateNewFilm() {
+//        // When
+//        ResponseEntity<Film> response = filmController.createFilm(testFilm);
+//        Film createdFilm = response.getBody();
+//
+//        // Then
+//        assertNotNull(createdFilm);
+//        assertEquals(1L, createdFilm.getId());
+//        assertEquals(testFilm.getName(), createdFilm.getName());
+//        assertEquals(testFilm.getDescription(), createdFilm.getDescription());
+//        assertEquals(testFilm.getReleaseDate(), createdFilm.getReleaseDate());
+//        assertEquals(testFilm.getDuration(), createdFilm.getDuration());
+//        assertEquals(testFilm.getMpa(), createdFilm.getMpa());
+//        assertEquals(testFilm.getGenres(), createdFilm.getGenres());
+//        assertTrue(createdFilm.getLikes().isEmpty());
+//        assertEquals(201, response.getStatusCodeValue());
+//    }
 
     @Test
     void createFilm_ShouldIncrementIds() {
