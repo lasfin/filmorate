@@ -30,7 +30,7 @@ public class FilmService {
 
     public Film updateFilm(@RequestBody Film film) {
         if (filmRepo.getFilm(film.getId()) == null) {
-            throw new FilmNotFoundException("Film not found: " + film.getId());
+            throw new RuntimeException("Film not found: " + film.getId());
         }
         return filmRepo.updateFilm(film);
     }
