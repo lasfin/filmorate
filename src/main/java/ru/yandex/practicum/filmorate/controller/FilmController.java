@@ -45,15 +45,11 @@ public class FilmController {
 
     @PutMapping()
     public ResponseEntity<Film> updateFilm(@RequestBody Film film) {
-        try {
-            Film updatedFilm = filmService.updateFilm(film);
-            if (updatedFilm == null) {
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-            }
-            return ResponseEntity.ok(updatedFilm);
-        } catch (FilmNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        Film updatedFilm = filmService.updateFilm(film);
+        if (updatedFilm == null) {
+            throw new RuntimeException("Film not found: " + film.getId());
         }
+        return ResponseEntity.ok(updatedFilm);
     }
 
     @DeleteMapping()
