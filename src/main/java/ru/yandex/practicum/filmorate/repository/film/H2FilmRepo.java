@@ -15,6 +15,7 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
 
@@ -263,7 +264,7 @@ public class H2FilmRepo implements FilmRepo {
                 film.getId()
         );
         genres.sort(Comparator.comparing(Genre::getId));
-        film.setGenres(new HashSet<>(genres));
+        film.setGenres(new LinkedHashSet<>(genres));
     }
 
     private void loadFilmLikes(Film film) {
