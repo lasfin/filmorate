@@ -26,12 +26,6 @@ public class FilmService {
     }
 
     public Film createFilm(@Valid @RequestBody Film filmBody) {
-        if (filmBody.getMpa() != null) {
-            throw new InvalidMpaException("Invalid MPA rating ID: " + filmBody.getMpa().getId());
-        }
-
-
-
         return filmRepo.createFilm(filmBody);
     }
 
