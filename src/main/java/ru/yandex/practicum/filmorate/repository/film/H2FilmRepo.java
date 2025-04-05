@@ -32,6 +32,13 @@ public class H2FilmRepo implements FilmRepo {
     public Film createFilm(Film film) {
         validateFilm(film);
 
+        // Sort genres by ID before saving
+        if (film.getGenres() != null && !film.getGenres().isEmpty()) {
+            List<Genre> sortedGenres = new ArrayList<>(film.getGenres());
+            sortedGenres.sort(Comparator.comparing(Genre::getId));
+            film.setGenres(new HashSet<>(sortedGenres));
+        }
+
         KeyHolder keyHolder = new GeneratedKeyHolder();
 
         jdbcTemplate.update(connection -> {
@@ -228,10 +235,12 @@ public class H2FilmRepo implements FilmRepo {
         // First delete existing genres to avoid duplicates
         jdbcTemplate.update("DELETE FROM film_genres WHERE film_id = ?", film.getId());
 
-        // Then insert the new genres
+        // Then insert the new genres in sorted order
         List<Object[]> batchArgs = new ArrayList<>();
+        List<Genre> sortedGenres = new ArrayList<>(film.getGenres());
+        sortedGenres.sort(Comparator.comparing(Genre::getId));
 
-        for (Genre genre : film.getGenres()) {
+        for (Genre genre : sortedGenres) {
             batchArgs.add(new Object[]{film.getId(), genre.getId()});
         }
 
