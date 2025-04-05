@@ -5,6 +5,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
+import ru.yandex.practicum.filmorate.exceptions.film.FilmNotFoundException;
 import ru.yandex.practicum.filmorate.exceptions.genre.InvalidGenreException;
 import ru.yandex.practicum.filmorate.exceptions.mpa.InvalidMpaException;
 import ru.yandex.practicum.filmorate.model.Film;

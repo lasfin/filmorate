@@ -84,12 +84,6 @@ public class FilmController {
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ErrorResponse handleException(final FilmNotFoundException e) {
-        return new NotFoundResponse("Not found", e.getMessage());
-    }
-
-    @ExceptionHandler
-    @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponse handleException(final UserNotFoundException e) {
         return new NotFoundResponse("Not found", e.getMessage());
     }
@@ -114,7 +108,7 @@ public class FilmController {
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public ErrorResponse handleException(final FilmNotFoundException e) {
+    public ErrorResponse handleFilmNotFoundException(final FilmNotFoundException e) {
         return new BadRequestResponse("Internal server error", e.getMessage());
     }
 }
