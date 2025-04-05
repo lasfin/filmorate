@@ -9,6 +9,7 @@ import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exceptions.BadRequestResponse;
 import ru.yandex.practicum.filmorate.exceptions.NotFoundResponse;
+import ru.yandex.practicum.filmorate.exceptions.film.FilmNotFoundException;
 import ru.yandex.practicum.filmorate.exceptions.genre.InvalidGenreException;
 import ru.yandex.practicum.filmorate.exceptions.mpa.InvalidMpaException;
 import ru.yandex.practicum.filmorate.exceptions.user.UserNotFoundException;
@@ -46,7 +47,7 @@ public class FilmController {
     public ResponseEntity<Film> updateFilm(@RequestBody Film film) {
         Film updatedFilm = filmService.updateFilm(film);
         if (updatedFilm == null) {
-            throw new RuntimeException("Film not found: " + film.getId());
+            throw new FilmNotFoundException("Film not found: " + film.getId());
         }
         return ResponseEntity.ok(updatedFilm);
     }
@@ -84,6 +85,12 @@ public class FilmController {
     @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponse handleException(final UserNotFoundException e) {
+        return new NotFoundResponse("Not found", e.getMessage());
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ErrorResponse handleException(final FilmNotFoundException e) {
         return new NotFoundResponse("Not found", e.getMessage());
     }
 
