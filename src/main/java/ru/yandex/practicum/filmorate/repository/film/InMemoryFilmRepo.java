@@ -59,6 +59,9 @@ public class InMemoryFilmRepo implements FilmRepo {
         filmToUpdate.setDescription(film.getDescription());
         filmToUpdate.setReleaseDate(film.getReleaseDate());
         filmToUpdate.setDuration(film.getDuration());
+        filmToUpdate.setMpa(film.getMpa());
+        filmToUpdate.setGenres(film.getGenres());
+        filmToUpdate.setLikes(film.getLikes());
 
         log.info("Film updated: {}", filmToUpdate);
 

@@ -10,6 +10,7 @@ import ru.yandex.practicum.filmorate.model.validations.AfterFirstFilm;
 
 import java.time.LocalDate;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 @Data
@@ -30,6 +31,6 @@ public class Film {
     private int duration;
 
     private MpaRating mpa;
-    private Set<Genre> genres = new HashSet<>();
+    private Set<Genre> genres = new LinkedHashSet<>();
     private Set<Long> likes = new HashSet<>();
 }
