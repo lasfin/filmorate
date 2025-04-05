@@ -91,13 +91,13 @@ public class FilmController {
     }
 
     @ExceptionHandler
-    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleInvalidMpaException(final InvalidMpaException e) {
         return new NotFoundResponse("Not found", e.getMessage());
     }
 
     @ExceptionHandler
-    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleInvalidGenreException(final InvalidGenreException e) {
         return new NotFoundResponse("Not found", e.getMessage());
     }
