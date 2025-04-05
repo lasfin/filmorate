@@ -23,7 +23,6 @@ public class InMemoryFilmRepo implements FilmRepo {
         // Sort genres by ID
         List<Genre> sortedGenres = new ArrayList<>(filmBody.getGenres());
         sortedGenres.sort(Comparator.comparing(Genre::getId));
-        
         Film newFilm = new Film(
                 nextId++,
                 filmBody.getName(),
@@ -59,7 +58,6 @@ public class InMemoryFilmRepo implements FilmRepo {
             // Sort genres by ID
             List<Genre> sortedGenres = new ArrayList<>(film.getGenres());
             sortedGenres.sort(Comparator.comparing(Genre::getId));
-            
             Film updatedFilm = new Film(
                     film.getId(),
                     film.getName(),
@@ -70,7 +68,6 @@ public class InMemoryFilmRepo implements FilmRepo {
                     new HashSet<>(sortedGenres),
                     film.getLikes()
             );
-            
             films.remove(existingFilm.get());
             films.add(updatedFilm);
             return updatedFilm;
