@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exceptions.BadRequestResponse;
 import ru.yandex.practicum.filmorate.exceptions.NotFoundResponse;
 import ru.yandex.practicum.filmorate.exceptions.film.FilmNotFoundException;
+import ru.yandex.practicum.filmorate.exceptions.genre.InvalidGenreException;
+import ru.yandex.practicum.filmorate.exceptions.mpa.InvalidMpaException;
 import ru.yandex.practicum.filmorate.exceptions.user.UserNotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
@@ -89,8 +91,20 @@ public class FilmController {
     }
 
     @ExceptionHandler
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ErrorResponse handleInvalidMpaException(final InvalidMpaException e) {
+        return new NotFoundResponse("Not found", e.getMessage());
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ErrorResponse handleInvalidGenreException(final InvalidGenreException e) {
+        return new NotFoundResponse("Not found", e.getMessage());
+    }
+
+    @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse handleException(final Exception e) {
+    public ErrorResponse handleBadRequestException(final Exception e) {
         return new BadRequestResponse("Bad request", e.getMessage());
     }
 

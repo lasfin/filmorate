@@ -218,18 +218,13 @@ public class H2FilmRepo implements FilmRepo {
     private void loadFilmGenres(Film film) {
         List<Genre> genres = jdbcTemplate.query(
                 "SELECT g.genre_id, g.name " +
-                        "FROM film_genres fg " +
-                        "JOIN genres g ON fg.genre_id = g.genre_id " +
-                        "WHERE fg.film_id = ?",
-                (rs, rowNum) -> {
-                    Genre genre = new Genre();
-                    genre.setId(rs.getLong("genre_id"));
-                    genre.setName(rs.getString("name"));
-                    return genre;
-                },
+                        "FROM genres g " +
+                        "JOIN film_genres fg ON g.genre_id = fg.genre_id " +
+                        "WHERE fg.film_id = ? " +
+                        "ORDER BY g.genre_id",
+                (rs, rowNum) -> new Genre(rs.getLong("genre_id"), rs.getString("name")),
                 film.getId()
         );
-
         film.setGenres(new HashSet<>(genres));
     }
 
