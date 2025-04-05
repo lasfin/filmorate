@@ -47,7 +47,7 @@ public class FilmController {
     public ResponseEntity<Film> updateFilm(@RequestBody Film film) {
         Film updatedFilm = filmService.updateFilm(film);
         if (updatedFilm == null) {
-            throw new RuntimeException("Film not found: " + film.getId());
+            throw new FilmNotFoundException("Film not found: " + film.getId());
         }
         return ResponseEntity.ok(updatedFilm);
     }
