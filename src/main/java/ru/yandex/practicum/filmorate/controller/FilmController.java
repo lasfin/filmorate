@@ -7,7 +7,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.filmorate.exceptions.BadRequestResponse;
 import ru.yandex.practicum.filmorate.exceptions.NotFoundResponse;
 import ru.yandex.practicum.filmorate.exceptions.film.FilmNotFoundException;
 import ru.yandex.practicum.filmorate.exceptions.genre.InvalidGenreException;
