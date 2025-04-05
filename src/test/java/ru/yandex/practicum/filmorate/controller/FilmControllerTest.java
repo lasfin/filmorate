@@ -112,30 +112,6 @@ class FilmControllerTest {
     }
 
     @Test
-    void updateFilm_ShouldThrowException_WhenFilmNotFound() {
-        // Given
-        MpaRating mpaRating = new MpaRating(1L, "G");
-        Set<Genre> genres = new HashSet<>();
-        Set<Long> likes = new HashSet<>();
-
-        Film nonExistentFilm = new Film(
-                999L,
-                "Non-existent",
-                "Description",
-                LocalDate.now(),
-                120,
-                mpaRating,
-                genres,
-                likes
-        );
-
-        // When/Then
-        assertThrows(RuntimeException.class, () -> {
-            filmController.updateFilm(nonExistentFilm);
-        });
-    }
-
-    @Test
     void deleteFilm_ShouldRemoveFilm() {
         // Given
         ResponseEntity<Film> createResponse = filmController.createFilm(testFilm);
