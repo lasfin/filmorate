@@ -5,6 +5,8 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
+import ru.yandex.practicum.filmorate.exceptions.genre.InvalidGenreException;
+import ru.yandex.practicum.filmorate.exceptions.mpa.InvalidMpaException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.MpaRating;
@@ -27,6 +29,8 @@ public class H2FilmRepo implements FilmRepo {
 
     @Override
     public Film createFilm(Film film) {
+        validateFilm(film);
+
         KeyHolder keyHolder = new GeneratedKeyHolder();
 
         jdbcTemplate.update(connection -> {
@@ -68,6 +72,8 @@ public class H2FilmRepo implements FilmRepo {
 
     @Override
     public Film updateFilm(Film film) {
+        validateFilm(film);
+
         jdbcTemplate.update(
                 "UPDATE films SET name = ?, description = ?, release_date = ?, duration = ?, mpa_rating_id = ? WHERE film_id = ?",
                 film.getName(),
@@ -85,6 +91,27 @@ public class H2FilmRepo implements FilmRepo {
         }
 
         return getFilm(film.getId());
+    }
+
+    private void validateFilm(Film film) {
+        validateMpa(film);
+        validateGenres(film);
+    }
+
+    private void validateMpa(Film film) {
+        if (film.getMpa() != null && !isValidMpa(film.getMpa().getId())) {
+            throw new InvalidMpaException("Invalid MPA rating ID: " + film.getMpa().getId());
+        }
+    }
+
+    private void validateGenres(Film film) {
+        if (film.getGenres() != null) {
+            for (Genre genre : film.getGenres()) {
+                if (!isValidGenre(genre.getId())) {
+                    throw new InvalidGenreException("Invalid Genre ID: " + genre.getId());
+                }
+            }
+        }
     }
 
     @Override
@@ -236,5 +263,23 @@ public class H2FilmRepo implements FilmRepo {
         );
 
         film.setLikes(new HashSet<>(likes));
+    }
+
+    private boolean isValidMpa(Long mpaId) {
+        Integer count = jdbcTemplate.queryForObject(
+                "SELECT COUNT(*) FROM mpa_ratings WHERE mpa_rating_id = ?",
+                Integer.class,
+                mpaId
+        );
+        return count != null && count > 0;
+    }
+
+    private boolean isValidGenre(Long genreId) {
+        Integer count = jdbcTemplate.queryForObject(
+                "SELECT COUNT(*) FROM genres WHERE genre_id = ?",
+                Integer.class,
+                genreId
+        );
+        return count != null && count > 0;
     }
 }
