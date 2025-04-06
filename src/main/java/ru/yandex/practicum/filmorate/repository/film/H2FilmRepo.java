@@ -121,11 +121,11 @@ public class H2FilmRepo implements FilmRepo {
                     .toList();
 
             // Check if all genres exist in a single query
-            String sql = "SELECT COUNT(*) FROM genres WHERE genre_id IN (" + 
+            String sql = "SELECT COUNT(*) FROM genres WHERE genre_id IN (" +
                     String.join(",", genreIds.stream().map(String::valueOf).toList()) + ")";
-            
+
             Integer count = jdbcTemplate.queryForObject(sql, Integer.class);
-            
+
             if (count == null || count != genreIds.size()) {
                 throw new InvalidGenreException("One or more Genre IDs are invalid");
             }
