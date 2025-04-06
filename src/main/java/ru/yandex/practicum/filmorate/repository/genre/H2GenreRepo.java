@@ -9,6 +9,7 @@ import ru.yandex.practicum.filmorate.model.Genre;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -47,14 +48,22 @@ public class H2GenreRepo implements GenreRepo {
     }
 
     public void addGenresToFilm(Long filmId, List<Genre> genres) {
+        // First delete existing genres
         String deleteSql = "DELETE FROM film_genres WHERE film_id = ?";
         jdbcTemplate.update(deleteSql, filmId);
 
         if (genres != null && !genres.isEmpty()) {
-            String insertSql = "INSERT INTO film_genres (film_id, genre_id) VALUES (?, ?)";
+            // Prepare batch arguments
+            List<Object[]> batchArgs = new ArrayList<>();
             for (Genre genre : genres) {
-                jdbcTemplate.update(insertSql, filmId, genre.getId());
+                batchArgs.add(new Object[]{filmId, genre.getId()});
             }
+
+            // Execute batch insert
+            jdbcTemplate.batchUpdate(
+                "INSERT INTO film_genres (film_id, genre_id) VALUES (?, ?)",
+                batchArgs
+            );
         }
     }
 

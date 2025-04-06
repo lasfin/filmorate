@@ -35,7 +35,7 @@ public class FilmController {
     }
 
     @PostMapping
-    public ResponseEntity<Film> createFilm(@Valid @RequestBody Film filmBody) {
+    public ResponseEntity<Film> createFilm(@RequestBody Film filmBody) {
         Film film = filmService.createFilm(filmBody);
         URI location = URI.create("/films/" + film.getId());
 
