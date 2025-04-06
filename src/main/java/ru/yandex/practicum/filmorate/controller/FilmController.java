@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.controller;
 
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -34,7 +35,7 @@ public class FilmController {
     }
 
     @PostMapping
-    public ResponseEntity<Film> createFilm(@RequestBody Film filmBody) {
+    public ResponseEntity<Film> createFilm(@Valid @RequestBody Film filmBody) {
         Film film = filmService.createFilm(filmBody);
         URI location = URI.create("/films/" + film.getId());
 

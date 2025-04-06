@@ -24,7 +24,7 @@ public class FilmService {
         this.userRepo = userRepo;
     }
 
-    public Film createFilm(@Valid @RequestBody Film filmBody) {
+    public Film createFilm(@RequestBody Film filmBody) {
         return filmRepo.createFilm(filmBody);
     }
 
