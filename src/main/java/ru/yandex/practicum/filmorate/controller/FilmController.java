@@ -7,9 +7,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.filmorate.exceptions.BadRequestResponse;
 import ru.yandex.practicum.filmorate.exceptions.NotFoundResponse;
 import ru.yandex.practicum.filmorate.exceptions.film.FilmNotFoundException;
+import ru.yandex.practicum.filmorate.exceptions.genre.InvalidGenreException;
+import ru.yandex.practicum.filmorate.exceptions.mpa.InvalidMpaException;
 import ru.yandex.practicum.filmorate.exceptions.user.UserNotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
@@ -27,6 +28,12 @@ public class FilmController {
         this.filmService = filmService;
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<Film> getFilmById(@PathVariable Long id) {
+        Film film = filmService.getFilmById(id);
+        return ResponseEntity.ok(film);
+    }
+
     @PostMapping
     public ResponseEntity<Film> createFilm(@Valid @RequestBody Film filmBody) {
         Film film = filmService.createFilm(filmBody);
@@ -37,7 +44,11 @@ public class FilmController {
 
     @PutMapping()
     public ResponseEntity<Film> updateFilm(@RequestBody Film film) {
-        return ResponseEntity.ok(filmService.updateFilm(film));
+        Film updatedFilm = filmService.updateFilm(film);
+        if (updatedFilm == null) {
+            throw new FilmNotFoundException("Film not found: " + film.getId());
+        }
+        return ResponseEntity.ok(updatedFilm);
     }
 
     @DeleteMapping()
@@ -72,20 +83,31 @@ public class FilmController {
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ErrorResponse handleException(final FilmNotFoundException e) {
-        return new NotFoundResponse("Not found", e.getMessage());
-    }
-
-    @ExceptionHandler
-    @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponse handleException(final UserNotFoundException e) {
         return new NotFoundResponse("Not found", e.getMessage());
     }
 
     @ExceptionHandler
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse handleException(final Exception e) {
-        return new BadRequestResponse("Bad request", e.getMessage());
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ErrorResponse handleException(final FilmNotFoundException e) {
+        return new NotFoundResponse("Not found", e.getMessage());
     }
 
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleInvalidMpaException(final InvalidMpaException e) {
+        return new NotFoundResponse("Not found", e.getMessage());
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleInvalidGenreException(final InvalidGenreException e) {
+        return new NotFoundResponse("Not found", e.getMessage());
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ErrorResponse handleRuntimeException(final RuntimeException e) {
+        return new NotFoundResponse("Not found", e.getMessage());
+    }
 }

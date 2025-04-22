@@ -1,6 +1,5 @@
 package ru.yandex.practicum.filmorate.service;
 
-import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.*;
@@ -24,7 +23,7 @@ public class FilmService {
         this.userRepo = userRepo;
     }
 
-    public Film createFilm(@Valid @RequestBody Film filmBody) {
+    public Film createFilm(@RequestBody Film filmBody) {
         return filmRepo.createFilm(filmBody);
     }
 
@@ -41,6 +40,14 @@ public class FilmService {
         }
 
         return filmRepo.deleteFilm(film);
+    }
+
+    public Film getFilmById(Long id) {
+        Film film = filmRepo.getFilm(id);
+        if (film == null) {
+            throw new FilmNotFoundException("Film not found: " + id);
+        }
+        return film;
     }
 
     public List<Film> getFilms() {

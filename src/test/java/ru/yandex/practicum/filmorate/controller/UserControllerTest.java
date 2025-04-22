@@ -11,6 +11,7 @@ import ru.yandex.practicum.filmorate.service.UserService;
 import ru.yandex.practicum.filmorate.repository.user.InMemoryUserRepo;
 
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -25,20 +26,29 @@ class UserControllerTest {
     void setUp() {
         userService = new UserService(new InMemoryUserRepo());
         userController = new UserController(userService);
+
+        // Initialize friends HashSet
+        HashSet<Long> friends = new HashSet<>();
+
         testUser = new User(
-                1,
+                1L,
                 "test@email.com",
                 "testLogin",
                 "Test Name",
-                LocalDate.of(1990, 1, 1)
+                LocalDate.of(1990, 1, 1),
+                friends
         );
 
+        // Initialize friends HashSet for second user
+        HashSet<Long> secondFriends = new HashSet<>();
+
         secondTestUser = new User(
-                2,
+                2L,
                 "test@email.com",
                 "testLogin",
                 "Second name",
-                LocalDate.of(1991, 1, 1)
+                LocalDate.of(1991, 1, 1),
+                secondFriends
         );
     }
 
@@ -53,6 +63,7 @@ class UserControllerTest {
         assertEquals(testUser.getLogin(), response.getBody().getLogin());
         assertEquals(testUser.getName(), response.getBody().getName());
         assertEquals(testUser.getBirthday(), response.getBody().getBirthday());
+        assertNotNull(response.getBody().getFriends());
     }
 
     @Test
@@ -70,13 +81,17 @@ class UserControllerTest {
         ResponseEntity<User> createResponse = userController.createUser(testUser);
         Long userId = createResponse.getBody().getId();
 
-        // Prepare updated user data
+        // Prepare updated user data with friends
+        HashSet<Long> updatedFriends = new HashSet<>();
+        updatedFriends.add(2L);
+
         User updatedUser = new User(
                 userId,
                 "updated@email.com",
                 "updatedLogin",
                 "Updated Name",
-                LocalDate.of(1991, 1, 1)
+                LocalDate.of(1991, 1, 1),
+                updatedFriends
         );
 
         ResponseEntity<User> updateResponse = userController.updateUser(updatedUser);
@@ -87,16 +102,20 @@ class UserControllerTest {
         assertEquals(updatedUser.getLogin(), updateResponse.getBody().getLogin());
         assertEquals(updatedUser.getName(), updateResponse.getBody().getName());
         assertEquals(updatedUser.getBirthday(), updateResponse.getBody().getBirthday());
+        assertNotNull(updateResponse.getBody().getFriends());
     }
 
     @Test
     void updateUser_WithNonExistingId_ShouldThrowException() {
+        HashSet<Long> friends = new HashSet<>();
+
         User nonExistingUser = new User(
                 999L,
                 "test@email.com",
                 "testLogin",
                 "Test Name",
-                LocalDate.of(1990, 1, 1)
+                LocalDate.of(1990, 1, 1),
+                friends
         );
 
         assertThrows(RuntimeException.class, () -> userController.updateUser(nonExistingUser));
@@ -137,12 +156,15 @@ class UserControllerTest {
 
     @Test
     void createUser_WithNullValues_ShouldCreateUserWithProvidedValues() {
+        HashSet<Long> friends = new HashSet<>();
+
         User userWithNullName = new User(
-                1,
+                1L,
                 "test@email.com",
                 "testLogin",
                 null,
-                LocalDate.of(1990, 1, 1)
+                LocalDate.of(1990, 1, 1),
+                friends
         );
 
         ResponseEntity<User> response = userController.createUser(userWithNullName);
@@ -159,6 +181,9 @@ class UserControllerTest {
 
         ResponseEntity<User> response = userController.addFriend(1L, 2L);
         assertEquals(HttpStatus.OK, response.getStatusCode());
+
+        // Only check that the response is OK, don't make assumptions about the friends collection
+        assertNotNull(response.getBody());
     }
 
     @Test
@@ -176,15 +201,18 @@ class UserControllerTest {
         userController.createUser(testUser);
         userController.createUser(secondTestUser);
 
-        User userWithNullName = new User(
-                3,
+        HashSet<Long> friends = new HashSet<>();
+
+        User thirdUser = new User(
+                3L,
                 "test@email.com",
                 "testLogin",
                 "someName",
-                LocalDate.of(1992, 1, 1)
+                LocalDate.of(1992, 1, 1),
+                friends
         );
 
-        userController.createUser(userWithNullName);
+        userController.createUser(thirdUser);
         // add friend to both of them
         userController.addFriend(1L, 3L);
         userController.addFriend(2L, 3L);
@@ -204,5 +232,8 @@ class UserControllerTest {
 
         ResponseEntity<User> response = userController.removeFriend(1L, 2L);
         assertEquals(HttpStatus.OK, response.getStatusCode());
+
+        // Only check that the response is OK, don't make assumptions about the friends collection
+        assertNotNull(response.getBody());
     }
 }
